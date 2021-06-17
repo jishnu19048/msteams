@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
@@ -11,7 +10,6 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import MailIcon from '@material-ui/icons/Mail';
 import ChatIcon from '@material-ui/icons/Chat';
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -21,6 +19,12 @@ import SearchIcon from '@material-ui/icons/Search';
 import InputBase from '@material-ui/core/InputBase';
 import VideoCallIcon from '@material-ui/icons/VideoCall';
 import SettingsIcon from '@material-ui/icons/Settings';
+import Fab from '@material-ui/core/Fab';
+import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions  } from '@material-ui/core';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+// import StartVideo from './startVideo';
 
 const drawerWidth = 240;
 
@@ -95,6 +99,18 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     padding: theme.spacing(3),
   },
+  options:{
+    marginLeft: 10,
+    marginRight: 10,
+  },
+  rows:{
+    marginLeft: '15%',
+  },
+  AlignDialogActions: {
+    justifyContent: 'center',
+    paddingBottom: 15,
+    marginInline:'100px'
+  }
 }));
 
 export default function ResponsiveDrawer(props) {
@@ -102,31 +118,67 @@ export default function ResponsiveDrawer(props) {
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
-
+  const handleStartVideo = () => {
+    setOpen(true);
+  };
+  const handleCloseVideo = () => {
+    setOpen(false);
+  };
   const drawer = (
     <div>
       <div className={classes.toolbar} />
       <Divider />
       <List>
-      {['Video Call'].map((text, index) => (
+      <ListItemIcon className={classes.rows}>
+          <Fab onClick={handleStartVideo} className={classes.options} color="primary" aria-label="add">
+            <VideoCallIcon />
+          </Fab>
+          <Fab className={classes.options} color="secondary" aria-label="edit">
+            <ChatIcon />
+          </Fab>
+      </ListItemIcon>
+      </List>
+      <Divider></Divider>
+      <Dialog open={open} onClose={handleCloseVideo} aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">Jishnu's Meeting</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          </DialogContentText>
+          <TextField
+          disabled
+          id="outlined-disabled"
+          fullWidth={true}
+          defaultValue="xyayxyxysys.com"
+          variant="outlined"
+        />
+        </DialogContent>
+        <DialogActions className={classes.AlignDialogActions}>
+            <Button
+                variant="contained"
+                color="primary"
+                className={classes.button}
+                fullWidth={true}
+              >
+                JOIN
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <List>
+      {['DummyCall1'].map((text, index) => (
           <ListItem button key={text}>
             <ListItemIcon>{<VideoCallIcon fontSize="large"/>}</ListItemIcon>
             <ListItemText primary={text} />
           </ListItem>
         ))}
-        {['Chat'].map((text, index) => (
+        {['DummyChat1'].map((text, index) => (
           <ListItem button key={text}>
             <ListItemIcon>{<ChatIcon />}</ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-        {['Settings'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>{<SettingsIcon />}</ListItemIcon>
             <ListItemText primary={text} />
           </ListItem>
         ))}
@@ -196,32 +248,111 @@ export default function ResponsiveDrawer(props) {
         </Hidden>
       </nav>
       <main className={classes.content}>
-        <div className={classes.toolbar} />
-        <Typography paragraph>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-          ut labore et dolore magna aliqua. Rhoncus dolor purus non enim praesent elementum
-          facilisis leo vel. Risus at ultrices mi tempus imperdiet. Semper risus in hendrerit
-          gravida rutrum quisque non tellus. Convallis convallis tellus id interdum velit laoreet id
-          donec ultrices. Odio morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit
-          adipiscing bibendum est ultricies integer quis. Cursus euismod quis viverra nibh cras.
-          Metus vulputate eu scelerisque felis imperdiet proin fermentum leo. Mauris commodo quis
-          imperdiet massa tincidunt. Cras tincidunt lobortis feugiat vivamus at augue. At augue eget
-          arcu dictum varius duis at consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem
-          donec massa sapien faucibus et molestie ac.
-        </Typography>
-        <Typography paragraph>
-          Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper eget nulla
-          facilisi etiam dignissim diam. Pulvinar elementum integer enim neque volutpat ac
-          tincidunt. Ornare suspendisse sed nisi lacus sed viverra tellus. Purus sit amet volutpat
-          consequat mauris. Elementum eu facilisis sed odio morbi. Euismod lacinia at quis risus sed
-          vulputate odio. Morbi tincidunt ornare massa eget egestas purus viverra accumsan in. In
-          hendrerit gravida rutrum quisque non tellus orci ac. Pellentesque nec nam aliquam sem et
-          tortor. Habitant morbi tristique senectus et. Adipiscing elit duis tristique sollicitudin
-          nibh sit. Ornare aenean euismod elementum nisi quis eleifend. Commodo viverra maecenas
-          accumsan lacus vel facilisis. Nulla posuere sollicitudin aliquam ultrices sagittis orci a.
-        </Typography>
+        <div className={classes.toolbar} />    
       </main>
     </div>
   );
 }
 
+const top100Films = [
+  { title: 'The Shawshank Redemption', year: 1994 },
+  { title: 'The Godfather', year: 1972 },
+  { title: 'The Godfather: Part II', year: 1974 },
+  { title: 'The Dark Knight', year: 2008 },
+  { title: '12 Angry Men', year: 1957 },
+  { title: "Schindler's List", year: 1993 },
+  { title: 'Pulp Fiction', year: 1994 },
+  { title: 'The Lord of the Rings: The Return of the King', year: 2003 },
+  { title: 'The Good, the Bad and the Ugly', year: 1966 },
+  { title: 'Fight Club', year: 1999 },
+  { title: 'The Lord of the Rings: The Fellowship of the Ring', year: 2001 },
+  { title: 'Star Wars: Episode V - The Empire Strikes Back', year: 1980 },
+  { title: 'Forrest Gump', year: 1994 },
+  { title: 'Inception', year: 2010 },
+  { title: 'The Lord of the Rings: The Two Towers', year: 2002 },
+  { title: "One Flew Over the Cuckoo's Nest", year: 1975 },
+  { title: 'Goodfellas', year: 1990 },
+  { title: 'The Matrix', year: 1999 },
+  { title: 'Seven Samurai', year: 1954 },
+  { title: 'Star Wars: Episode IV - A New Hope', year: 1977 },
+  { title: 'City of God', year: 2002 },
+  { title: 'Se7en', year: 1995 },
+  { title: 'The Silence of the Lambs', year: 1991 },
+  { title: "It's a Wonderful Life", year: 1946 },
+  { title: 'Life Is Beautiful', year: 1997 },
+  { title: 'The Usual Suspects', year: 1995 },
+  { title: 'Léon: The Professional', year: 1994 },
+  { title: 'Spirited Away', year: 2001 },
+  { title: 'Saving Private Ryan', year: 1998 },
+  { title: 'Once Upon a Time in the West', year: 1968 },
+  { title: 'American History X', year: 1998 },
+  { title: 'Interstellar', year: 2014 },
+  { title: 'Casablanca', year: 1942 },
+  { title: 'City Lights', year: 1931 },
+  { title: 'Psycho', year: 1960 },
+  { title: 'The Green Mile', year: 1999 },
+  { title: 'The Intouchables', year: 2011 },
+  { title: 'Modern Times', year: 1936 },
+  { title: 'Raiders of the Lost Ark', year: 1981 },
+  { title: 'Rear Window', year: 1954 },
+  { title: 'The Pianist', year: 2002 },
+  { title: 'The Departed', year: 2006 },
+  { title: 'Terminator 2: Judgment Day', year: 1991 },
+  { title: 'Back to the Future', year: 1985 },
+  { title: 'Whiplash', year: 2014 },
+  { title: 'Gladiator', year: 2000 },
+  { title: 'Memento', year: 2000 },
+  { title: 'The Prestige', year: 2006 },
+  { title: 'The Lion King', year: 1994 },
+  { title: 'Apocalypse Now', year: 1979 },
+  { title: 'Alien', year: 1979 },
+  { title: 'Sunset Boulevard', year: 1950 },
+  { title: 'Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb', year: 1964 },
+  { title: 'The Great Dictator', year: 1940 },
+  { title: 'Cinema Paradiso', year: 1988 },
+  { title: 'The Lives of Others', year: 2006 },
+  { title: 'Grave of the Fireflies', year: 1988 },
+  { title: 'Paths of Glory', year: 1957 },
+  { title: 'Django Unchained', year: 2012 },
+  { title: 'The Shining', year: 1980 },
+  { title: 'WALL·E', year: 2008 },
+  { title: 'American Beauty', year: 1999 },
+  { title: 'The Dark Knight Rises', year: 2012 },
+  { title: 'Princess Mononoke', year: 1997 },
+  { title: 'Aliens', year: 1986 },
+  { title: 'Oldboy', year: 2003 },
+  { title: 'Once Upon a Time in America', year: 1984 },
+  { title: 'Witness for the Prosecution', year: 1957 },
+  { title: 'Das Boot', year: 1981 },
+  { title: 'Citizen Kane', year: 1941 },
+  { title: 'North by Northwest', year: 1959 },
+  { title: 'Vertigo', year: 1958 },
+  { title: 'Star Wars: Episode VI - Return of the Jedi', year: 1983 },
+  { title: 'Reservoir Dogs', year: 1992 },
+  { title: 'Braveheart', year: 1995 },
+  { title: 'M', year: 1931 },
+  { title: 'Requiem for a Dream', year: 2000 },
+  { title: 'Amélie', year: 2001 },
+  { title: 'A Clockwork Orange', year: 1971 },
+  { title: 'Like Stars on Earth', year: 2007 },
+  { title: 'Taxi Driver', year: 1976 },
+  { title: 'Lawrence of Arabia', year: 1962 },
+  { title: 'Double Indemnity', year: 1944 },
+  { title: 'Eternal Sunshine of the Spotless Mind', year: 2004 },
+  { title: 'Amadeus', year: 1984 },
+  { title: 'To Kill a Mockingbird', year: 1962 },
+  { title: 'Toy Story 3', year: 2010 },
+  { title: 'Logan', year: 2017 },
+  { title: 'Full Metal Jacket', year: 1987 },
+  { title: 'Dangal', year: 2016 },
+  { title: 'The Sting', year: 1973 },
+  { title: '2001: A Space Odyssey', year: 1968 },
+  { title: "Singin' in the Rain", year: 1952 },
+  { title: 'Toy Story', year: 1995 },
+  { title: 'Bicycle Thieves', year: 1948 },
+  { title: 'The Kid', year: 1921 },
+  { title: 'Inglourious Basterds', year: 2009 },
+  { title: 'Snatch', year: 2000 },
+  { title: '3 Idiots', year: 2009 },
+  { title: 'Monty Python and the Holy Grail', year: 1975 },
+];
