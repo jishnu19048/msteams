@@ -1,0 +1,21 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
+.header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 8vh;
+    position: relative;
+    width: 100%;
+    background-color: var(--main-darklg);
+  }
+  .header__back {
+    display: none;
+    position: absolute;
+    font-size: 1.3rem;
+    top: 17px;
+    left: 28px;
+    color: #fff;
+  }
+  .logo > h3 {
+    color: var(--main-light);
+  }

@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useState} from 'react';
+import Axios from 'axios';
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
@@ -23,10 +24,12 @@ import Fab from '@material-ui/core/Fab';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions  } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import ChromeReaderModeIcon from '@material-ui/icons/ChromeReaderMode';
 // import StartVideo from './startVideo';
+import ChatForm from './chat-form';
+import { useNavigate } from "react-router-dom";
 
-const drawerWidth = 240;
+const drawerWidth = 100;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -43,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
       width: `calc(100%)`,
       marginLeft: 0,
     },
-    background : '#af52bf ',
+    background : '#7B83EB',
     zIndex: theme.zIndex.drawer + 1,
   },
   search: {
@@ -102,9 +105,12 @@ const useStyles = makeStyles((theme) => ({
   options:{
     marginLeft: 10,
     marginRight: 10,
+    background : '#7B83EB',
   },
   rows:{
     marginLeft: '15%',
+    paddingBottom: 5,
+    paddingTop: 5
   },
   AlignDialogActions: {
     justifyContent: 'center',
@@ -113,21 +119,21 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function ResponsiveDrawer(props) {
+function ResponsiveDrawer(props) {
+  const [link, setLink] = useState("");
   const { window } = props;
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [open, setOpen] = React.useState(false);
-
+  const navigate =useNavigate();
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
-  const handleStartVideo = () => {
-    setOpen(true);
-  };
-  const handleCloseVideo = () => {
-    setOpen(false);
+
+  const handleStartMeet = () => {
+        Axios.get(`http://localhost:8080/`).then(res => {
+            navigate(`/join/${res.data.link}?quality=30`);
+          })
   };
   const drawer = (
     <div>
@@ -135,53 +141,15 @@ export default function ResponsiveDrawer(props) {
       <Divider />
       <List>
       <ListItemIcon className={classes.rows}>
-          <Fab onClick={handleStartVideo} className={classes.options} color="primary" aria-label="add">
+          <Fab onClick={handleStartMeet} className={classes.options}  aria-label="add">
             <VideoCallIcon />
           </Fab>
-          <Fab className={classes.options} color="secondary" aria-label="edit">
+      </ListItemIcon>
+      <ListItemIcon className={classes.rows}>
+          <Fab className={classes.options}  aria-label="edit">
             <ChatIcon />
           </Fab>
       </ListItemIcon>
-      </List>
-      <Divider></Divider>
-      <Dialog open={open} onClose={handleCloseVideo} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Jishnu's Meeting</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-          </DialogContentText>
-          <TextField
-          disabled
-          id="outlined-disabled"
-          fullWidth={true}
-          defaultValue="xyayxyxysys.com"
-          variant="outlined"
-        />
-        </DialogContent>
-        <DialogActions className={classes.AlignDialogActions}>
-            <Button
-                variant="contained"
-                color="primary"
-                className={classes.button}
-                fullWidth={true}
-              >
-                JOIN
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <List>
-      {['DummyCall1'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>{<VideoCallIcon fontSize="large"/>}</ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-        {['DummyChat1'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>{<ChatIcon />}</ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
       </List>
     </div>
   );
@@ -248,7 +216,8 @@ export default function ResponsiveDrawer(props) {
         </Hidden>
       </nav>
       <main className={classes.content}>
-        <div className={classes.toolbar} />    
+        <div className={classes.toolbar} />  
+        <ChatForm/>  
       </main>
     </div>
   );
@@ -356,3 +325,5 @@ const top100Films = [
   { title: '3 Idiots', year: 2009 },
   { title: 'Monty Python and the Holy Grail', year: 1975 },
 ];
+
+export default ResponsiveDrawer;
