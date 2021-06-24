@@ -1,6 +1,7 @@
 const openSocket = require('socket.io-client');
 const Peer = require('peerjs');
 let socketInstance=null;
+let peers = {};
 const initializePeerConnection = () => {
     var peer=new window.Peer('', {
         /// Use ICE Servers for NAT connections :)
@@ -59,7 +60,6 @@ class Connection {
     }
     initializePeersEvents = () => {
         this.myPeer.on('open', (id) => {
-            //uniqueID for every p2p connection made
             this.myID = id;
             const roomID = window.location.pathname.split('/')[2];
             const userData = {
@@ -83,6 +83,19 @@ class Connection {
                 this.newUserConnection(stream);
             }
         })
+    }
+    sendMessage = (text) => {
+        this.socket.emit('chat', text);
+    }
+    // getMessage = () => {
+    //     console.log("hearing");
+    //     this.socket.on('chat', message => {
+    //         console.log(message);
+    //         return message;
+    //     })
+    // }
+    getSocket = () => {
+        return this.socket;
     }
     getVideoAudioStream = (video=true, audio=true) => {
         let quality = 12;
@@ -120,6 +133,11 @@ class Connection {
             document.getElementById(createObj.id).srcObject = createObj.stream;
         }
     }
+    removeVideo = (id) => {
+        delete this.videoContainer[id];
+        const video = document.getElementById(id);
+        if (video) video.remove();
+    }
     setPeersListeners = (stream) => {
         this.myPeer.on('call', (call) => {
             call.answer(stream);
@@ -139,6 +157,7 @@ class Connection {
         });
     }
     newUserConnection = (stream) => {
+        console.log("checking for new users");
         this.socket.on('new', (userData) => {
             console.log('New User Connected', userData);
             this.connectToNewUser(userData, stream);
@@ -161,10 +180,13 @@ class Connection {
         peers[userID] = call;
     }
     endConnection = () => {
-        // const myMediaTracks = this.videoContainer[this.myID].stream.getTracks();
-        // myMediaTracks.forEach((t) => {
-        //     t.stop();
-        // })
+        if(this.videoContainer[this.myID]==null){
+            return;
+        }
+        const myMediaTracks = this.videoContainer[this.myID].stream.getTracks();
+        myMediaTracks.forEach((t) => {
+            t.stop();
+        })
         socketInstance.socket.disconnect();
         this.myPeer.destroy();
     }

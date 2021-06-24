@@ -21,7 +21,7 @@
 }
 
 .main__left {
-  flex: 1;
+  flex: 0.8;
   display: flex;
   flex-direction: column;
 }
@@ -60,6 +60,7 @@ video {
 }
 
 .options__right {
+  display:flex;
   margin-left: auto;
 }
 
@@ -81,9 +82,9 @@ video {
 }
 
 @media (max-width: 700px) {
-  .main__right {
+  /* .main__right {
     display: none;
-  }
+  } */
   .main__left {
     width: 100%;
     flex: 1;

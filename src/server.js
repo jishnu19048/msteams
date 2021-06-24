@@ -34,12 +34,26 @@ app.get("/", (req, res) => {
 });
 //listener for our socket
 io.on('connection', socket => {
-    socket.on('join-room', (roomID, userID) => {
-        console.log('Joinned room', roomID);
+    console.log('socket established')
+    socket.on('join-room', (userData) => {
+        const { roomID, userID } = userData;
         socket.join(roomID);
-        socket.to(roomID).emit('new', userID);
+        socket.to(roomID).emit('new', userData);
         socket.on('disconnect', () => {
             socket.to(roomID).emit('disconnected', userID);
+        });
+        socket.on('chat', (message) => {
+            console.log(message);
+            socket.to(roomID).emit('new-chat', {...message, userData});
+        });
+        // socket.on('reconnect-user', () => {
+        //     socket.to(roomID).broadcast.emit('new-user-connect', userData);
+        // });
+        socket.on('display-media', (value) => {
+            socket.to(roomID).emit('display-media', {userID, value });
+        });
+        socket.on('user-video-off', (value) => {
+            socket.to(roomID).emit('user-video-off', value);
         });
     });
 });

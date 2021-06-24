@@ -1,6 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef  } from 'react';
 import './_video-feed.css';
+import './_chat.css';
+import SendIcon from '@material-ui/icons/Send';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
+import ChatIcon from '@material-ui/icons/Chat';
 import VideocamIcon from '@material-ui/icons/Videocam';
 import VideocamOffIcon from '@material-ui/icons/VideocamOff';
 import MicOffIcon from '@material-ui/icons/MicOff';
@@ -37,24 +40,59 @@ const VideoFeed = () =>{
     let socketInstance = React.useRef(null);
     const [user, setUser] = React.useState("dummy");
     const classes = useStyles();
+    const [message, setMessage] = useState('')
+    const chatRef = useRef(null);
     const [openx, setOpen] = React.useState(true);
+    const [chatOpen, setChatOpen] = React.useState(true);
     const navigate =useNavigate();
+    const [messageItems, setMessageItems] = React.useState([]);
     const handleStartMeet = () => {
       setOpen(!openx);
     };
+    // useEffect(()=>{
+    //   if(socketInstance.current!=null) listenChat();
+    // });
+    socketInstance.current?.socket.on('new-chat', message => {
+      console.log(message);
+      listenChat(message);
+    })
+    useEffect(() => {
+        return () => {
+            socketInstance.current?.endConnection();
+        }
+    }, []);
     useEffect(()=>{
       if(user) startCall();
     }, [user]);
     const startCall=() => {
       socketInstance.current=createSocketConnectionInstance();
-      console.log("HEY");
+    }
+    const sendChat=()=>{
+      // console.log(Date.now());
+      const newItem = {id: Date.now(),modifier:"me",text:message}
+      setMessageItems(messageItems.concat(newItem));
+      socketInstance.current.sendMessage({message});
+      setMessage('');
+      // console.log({message});
+    }
+    const listenChat=(getChat)=>{
+      const newItem = {id: Date.now(),modifier:"him",text:getChat.message}
+      setMessageItems(messageItems.concat(newItem));
     }
     const endCall=() => {
       socketInstance.current.endConnection();
       navigate('/');
     }
-    const handleuser = (user) => {
-      setUser(user);
+    // const handleuser = (user) => {
+    //   setUser(user);
+    // }
+    const hideChat = () => {
+      setChatOpen(!chatOpen);
+      // if(!chatOpen){
+      //   chatFeed.current.display="none";
+      // }else{
+      //   chatFeed.current.display="block";
+      // }
     }
     const link=window.location.href;
     return (
@@ -73,15 +111,19 @@ const VideoFeed = () =>{
                     <Fab className={classes.options__button}>
                         <MicOffIcon />
                     </Fab>
+                    
                 </div>
                 <div className="options__mid" onClick={endCall}>
                     <Fab color="secondary" className={classes.options__button}>
                         <CallEndIcon/>
                     </Fab>
                 </div>
-                <div className="options__right" onClick={handleStartMeet}>
-                    <Fab className={classes.options__button}>
+                <div className="options__right">
+                    <Fab className={classes.options__button} onClick={handleStartMeet}>
                         <PersonAddIcon/>
+                    </Fab>
+                    <Fab className={classes.options__button} onClick={hideChat}>
+                        <ChatIcon/>
                     </Fab>
                 </div>
                 <Dialog  open={openx} onClose={handleStartMeet} aria-labelledby="form-dialog-title">
@@ -111,6 +153,25 @@ const VideoFeed = () =>{
                   </DialogActions>
                 </Dialog>
               </div>
+            </div>
+            <div className="main__right">
+                <div className="main__chat_window">
+                  <div className="messages">
+                    <ul ref={chatRef}>
+                      {messageItems.map(messageItems => (
+                        <li key={messageItems.id} className={messageItems.modifier}>
+                          {messageItems.text}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+                <div className="main__message_container">
+                <input id="chat_message" value={message} onChange={event => setMessage(event.target.value)} type="text" autoComplete="off" placeholder="Type here..." />
+                <Fab id="send" className={classes.options__button}>
+                    <SendIcon onClick={sendChat}/>
+                </Fab>
+                </div>
             </div>
           </div>
         </div>
