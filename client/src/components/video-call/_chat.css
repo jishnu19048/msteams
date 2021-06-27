@@ -3,6 +3,8 @@
     background-color: #242f41;
 }
 .main__chat_window {
+    display: flex;
+    flex-direction: column;
     flex-grow: 1;
     height: 90%;
 }
@@ -20,8 +22,10 @@
     border: none;
 }
 .messages {
-    max-height:90% ;
+    flex-grow: 1 ;
+    overflow: auto;
 }
+
 @media (max-width: 700px) {
     .main__right {
       display: none;

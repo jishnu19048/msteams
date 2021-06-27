@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import './_chat.css';
 import SendIcon from '@material-ui/icons/Send';
-import ChatIcon from '@material-ui/icons/Chat';
 import Fab from '@material-ui/core/Fab';
 import { makeStyles } from '@material-ui/core/styles';
 import { useNavigate } from "react-router-dom";

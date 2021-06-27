@@ -40,7 +40,9 @@ const VideoFeed = () =>{
     let socketInstance = React.useRef(null);
     const [user, setUser] = React.useState("dummy");
     const classes = useStyles();
-    const [message, setMessage] = useState('')
+    const [message, setMessage] = useState('');
+    const [micStatus, setMicStatus] = useState(true);
+    const [camStatus, setCamStatus] = useState(true);
     const chatRef = useRef(null);
     const [openx, setOpen] = React.useState(true);
     const [chatOpen, setChatOpen] = React.useState(true);
@@ -52,6 +54,15 @@ const VideoFeed = () =>{
     // useEffect(()=>{
     //   if(socketInstance.current!=null) listenChat();
     // });
+    socketInstance.current?.socket.on('check-user-video-toggle', value => {
+      console.log(value.userDatauserID +"video status"+ value.value);
+
+      if(value.value){
+        socketInstance.current?.switchVideoOff(value.userData);
+      }else{
+        socketInstance.current?.switchVideoOn(value.userData);
+      }
+    })
     socketInstance.current?.socket.on('new-chat', message => {
       console.log(message);
       listenChat(message);
@@ -83,16 +94,14 @@ const VideoFeed = () =>{
       socketInstance.current.endConnection();
       navigate('/');
     }
-    // const handleuser = (user) => {
-    //   setUser(user);
-    // }
+    const handleCam = () => {   
+      const { toggleVideoTrack } = socketInstance.current;
+      toggleVideoTrack( !camStatus, micStatus );
+      setCamStatus(!camStatus);
+      socketInstance.current?.socket.emit('user-video-toggle',camStatus);
+    }
     const hideChat = () => {
       setChatOpen(!chatOpen);
-      // if(!chatOpen){
-      //   chatFeed.current.display="none";
-      // }else{
-      //   chatFeed.current.display="block";
-      // }
     }
     const link=window.location.href;
     return (
@@ -105,8 +114,12 @@ const VideoFeed = () =>{
               </div>
               <div className="options">
                 <div className="options__left">
-                    <Fab className={classes.options__button}>
-                        <VideocamOffIcon />
+                    <Fab className={classes.options__button} onClick={handleCam}>
+                        {camStatus &&
+                          <VideocamOffIcon />
+                        }
+                        {!camStatus && <VideocamIcon/>
+                        }
                     </Fab>
                     <Fab className={classes.options__button}>
                         <MicOffIcon />

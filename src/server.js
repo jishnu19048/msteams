@@ -49,11 +49,8 @@ io.on('connection', socket => {
         // socket.on('reconnect-user', () => {
         //     socket.to(roomID).broadcast.emit('new-user-connect', userData);
         // });
-        socket.on('display-media', (value) => {
-            socket.to(roomID).emit('display-media', {userID, value });
-        });
-        socket.on('user-video-off', (value) => {
-            socket.to(roomID).emit('user-video-off', value);
+        socket.on('user-video-toggle', (value) => {
+            socket.to(roomID).emit('check-user-video-toggle', {userData, value });
         });
     });
 });

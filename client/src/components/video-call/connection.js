@@ -35,8 +35,7 @@ class Connection {
     myPeer;
     socket;
     myID = '';
-    constructor() {
-        
+    constructor(){
         this.myPeer = initializePeerConnection();
         this.socket = initializeSocketConnection();
         this.initializeSocketEvents();
@@ -87,16 +86,7 @@ class Connection {
     sendMessage = (text) => {
         this.socket.emit('chat', text);
     }
-    // getMessage = () => {
-    //     console.log("hearing");
-    //     this.socket.on('chat', message => {
-    //         console.log(message);
-    //         return message;
-    //     })
-    // }
-    getSocket = () => {
-        return this.socket;
-    }
+
     getVideoAudioStream = (video=true, audio=true) => {
         let quality = 12;
         const myNavigator = navigator.mediaDevices.getUserMedia || 
@@ -129,14 +119,67 @@ class Connection {
             videoContainer.appendChild(video)
             roomContainer.append(videoContainer);
         } else {
-            // @js-ignore
             document.getElementById(createObj.id).srcObject = createObj.stream;
+        }
+    }
+    switchVideoOff(userData){
+        const { roomID, userID } =userData;
+        const myVideo =  document.getElementById(userID);
+        myVideo.srcObject.getVideoTracks()[0].enabled=false;
+    }
+    switchVideoOn(userData){
+        const { roomID, userID } =userData;
+        const myVideo =  document.getElementById(userID);
+        myVideo.srcObject.getVideoTracks()[0].enabled=true;
+    }
+    reInitializeStream = (video, audio, type='userMedia') => {
+        const media =  this.getVideoAudioStream(video, audio);
+        return new Promise((resolve) => {
+            media.then((stream) => {
+                const myVideo = this.getMyVideo();
+                checkAndAddClass(myVideo, type);
+                this.createVideo({ id: this.myID, stream });
+                replaceStream(stream);
+                resolve(true);
+            });
+        });
+    }
+    getMyVideo = (id=this.myID) => {
+        return document.getElementById(id);
+    }
+    toggleVideoTrack = (video, audio) => {
+        const myVideo = this.getMyVideo();
+        if (myVideo && !video) myVideo.srcObject?.getVideoTracks().forEach((track) => {
+            if (track.kind === 'video') {
+                !video && track.stop();
+            }
+        });
+        else if (myVideo) {
+            this.reInitializeStream(video,audio);
         }
     }
     removeVideo = (id) => {
         delete this.videoContainer[id];
         const video = document.getElementById(id);
         if (video) video.remove();
+    }
+    setPeersListeners = (stream) => {
+        this.myPeer.on('call', (call) => {
+            call.answer(stream);
+            call.on('stream', (userVideoStream) => {console.log('user stream data', 
+            userVideoStream)
+                this.createVideo({ id: call.metadata.id, stream: userVideoStream });
+            });
+            call.on('close', () => {
+                console.log('closing peers listeners', call.metadata.id);
+                this.removeVideo(call.metadata.id);
+            });
+            call.on('error', () => {
+                console.log('peer error ------');
+                this.removeVideo(call.metadata.id);
+            });
+            peers[call.metadata.id] = call;
+        });
     }
     setPeersListeners = (stream) => {
         this.myPeer.on('call', (call) => {
@@ -190,6 +233,28 @@ class Connection {
         socketInstance.socket.disconnect();
         this.myPeer.destroy();
     }
+}
+const replaceStream = (mediaStream) => {
+    Object.values(peers).map((peer) => {
+        peer.peerConnection?.getSenders().map((sender) => {
+            if(sender.track.kind == "audio") {
+                if(mediaStream.getAudioTracks().length > 0){
+                    sender.replaceTrack(mediaStream.getAudioTracks()[0]);
+                }
+            }
+            if(sender.track.kind == "video") {
+                if(mediaStream.getVideoTracks().length > 0){
+                    sender.replaceTrack(mediaStream.getVideoTracks()[0]);
+                }
+            }
+        });
+    })
+}
+const checkAndAddClass = (video, type='userMedia') => {
+    if (video?.classList?.length === 0 && type === 'displayMedia')  
+        video.classList.add('display-media');
+    else 
+        video.classList.remove('display-media');
 }
 
 export function createSocketConnectionInstance() {
