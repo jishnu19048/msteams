@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useState} from 'react';
+import { useNavigate } from "react-router-dom";
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -12,7 +13,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-
+import { auth, generateUserDocument } from "../../firebase";
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -50,10 +51,12 @@ export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const classes = useStyles();
+  const navigate =useNavigate();
   const handleSignIn = () => {
-    auth.signInWithEmailAndPassword({email}, {password}).catch(error => {
+    auth.signInWithEmailAndPassword(email, password).catch(error => {
       console.error("Error signing in with password and email", error);
     });
+    navigate('/');
   };
   return (
     <Container component="main" maxWidth="xs">
@@ -95,7 +98,6 @@ export default function SignIn() {
             label="Remember me"
           />
           <Button
-            type="submit"
             fullWidth
             variant="contained"
             color="primary"
@@ -111,7 +113,7 @@ export default function SignIn() {
               </Link>
             </Grid>
             <Grid item>
-              <Link href="#" variant="body2">
+              <Link href="/SignUp" variant="body2">
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>

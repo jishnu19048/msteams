@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import Axios from 'axios';
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -28,6 +28,7 @@ import ChromeReaderModeIcon from '@material-ui/icons/ChromeReaderMode';
 // import StartVideo from './startVideo';
 import ChatForm from './chat-form';
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../middleware/UserProvider";
 
 const drawerWidth = 100;
 
@@ -120,6 +121,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function ResponsiveDrawer(props) {
+  const {currentUser} = useAuth();
+  const {displayName, email} = currentUser;
   const [link, setLink] = useState("");
   const[open,setOpen] = useState(false);
   const[meetingName,setMeetingName] = useState("Your Meeting");
