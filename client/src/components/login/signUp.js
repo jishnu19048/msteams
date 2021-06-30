@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { useNavigate } from "react-router-dom";
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -14,6 +14,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { auth, generateUserDocument } from "../../firebase";
+import CircularProgress from '@material-ui/core/CircularProgress';
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -52,17 +53,24 @@ export default function SignUp() {
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [loading,setLoading] = useState(true);
   const classes = useStyles();
   const navigate =useNavigate();
+  useEffect(() => {
+    setLoading(false);
+  })
   const handleSignUp = async () => {
+    setLoading(true);
     try{
       await auth.createUserWithEmailAndPassword(email, password).then(user =>{
         console.log("signed in!");
         generateUserDocument(user, {firstName});
-        navigate('/');
+        setLoading(false);
+        navigate('/signIn');
       });
     }
     catch(error){
+      setLoading(false);
       console.log("Error signing up!");
       setEmail("");
       setPassword("");
@@ -77,7 +85,7 @@ export default function SignUp() {
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
-        <Typography component="h1" variant="h5">
+        <Typography style={{ fontWeight: 600 }} component="h1" variant="h4">
           Sign up
         </Typography>
         <form className={classes.form} noValidate>

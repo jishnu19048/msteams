@@ -1,6 +1,11 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useEffect} from 'react';
 import Axios from 'axios';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { HiStatusOnline } from 'react-icons/hi';
 import AppBar from '@material-ui/core/AppBar';
+import Avatar from '@material-ui/core/Avatar';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
@@ -29,6 +34,13 @@ import ChromeReaderModeIcon from '@material-ui/icons/ChromeReaderMode';
 import ChatForm from './chat-form';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../middleware/UserProvider";
+import { auth, generateUserDocument } from "../firebase";
+import Add from '@material-ui/icons/Add';
+import { Row, Item } from '@mui-treasury/components/flex';
+import { Info, InfoTitle, InfoSubtitle } from '@mui-treasury/components/info';
+import { useTutorInfoStyles } from '@mui-treasury/styles/info/tutor';
+import { useSizedIconButtonStyles } from '@mui-treasury/styles/iconButton/sized';
+import { useDynamicAvatarStyles } from '@mui-treasury/styles/avatar/dynamic';
 
 const drawerWidth = 100;
 
@@ -58,6 +70,7 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: fade(theme.palette.common.white, 0.25),
     },
     marginLeft: 0,
+    marginRight: 20,
     width: '100%',
     [theme.breakpoints.up('sm')]: {
       marginLeft: theme.spacing(1),
@@ -117,13 +130,28 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     paddingBottom: 15,
     marginInline:'100px'
-  }
+  },
+  loadingDiv: {
+    position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)"
+  },
+  toolbarButtons: {
+    marginLeft: 'auto',
+  },
+  action: {
+    backgroundColor: '#a2cf6e',
+    borderRadius:1000,
+    height:20,
+    width:20,
+    boxShadow: '0 1px 4px 0 rgba(0,0,0,0.12)',
+    padding: 2,
+  },
 }));
 
 function ResponsiveDrawer(props) {
   const {currentUser} = useAuth();
   const {displayName, email} = currentUser;
   const [link, setLink] = useState("");
+  const [loading,setLoading] = useState(true);
   const[open,setOpen] = useState(false);
   const[meetingName,setMeetingName] = useState("Your Meeting");
   const { window } = props;
@@ -131,6 +159,19 @@ function ResponsiveDrawer(props) {
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const navigate =useNavigate();
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const iconBtnStyles = useSizedIconButtonStyles({ padding: 6 });
+  const avatarStyles = useDynamicAvatarStyles({ radius: 12, size: 48 });
+  useEffect(() => {
+    setLoading(false);
+  })
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -138,10 +179,19 @@ function ResponsiveDrawer(props) {
     setOpen(!open);
   };
   const handleStartMeet = () => {
+    setLoading(true);
         Axios.get(`http://localhost:8080/`).then(res => {
+          setLoading(false);
             navigate(`/join/${res.data.link}?name=${meetingName}`);
           })
   };
+  const handleLogOut = () => {
+    auth.signOut().then(() => {
+      // Sign-out successful.
+    }).catch((error) => {
+      console.log(error);
+    });
+  }
   const drawer = (
     <div>
       <div className={classes.toolbar} />
@@ -187,72 +237,111 @@ function ResponsiveDrawer(props) {
   );
 
   const container = window !== undefined ? () => window().document.body : undefined;
-
-  return (
-    <div className={classes.root}>
-      <CssBaseline />
-      <AppBar position="fixed" className={classes.appBar}>
-        <Toolbar >
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            className={classes.menuButton}
-          >
-            <MenuIcon />
-          </IconButton>
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
+  if(loading){
+    return(
+      <div className={classes.loadingDiv}>
+        <CircularProgress size={200} color="secondary" />
+      </div>
+    )
+  }else{
+    return (
+      <div className={classes.root}>
+        <CssBaseline />
+        <AppBar position="fixed" className={classes.appBar}>
+          <Toolbar >
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              className={classes.menuButton}
+            >
+              <MenuIcon />
+            </IconButton>
+            <div className={classes.search}>
+              <div className={classes.searchIcon}>
+                <SearchIcon />
+              </div>
+              <InputBase
+                placeholder="Search…"
+                classes={{
+                  root: classes.inputRoot,
+                  input: classes.inputInput,
+                }}
+                inputProps={{ 'aria-label': 'search' }}
+              />
             </div>
-            <InputBase
-              placeholder="Search…"
+            <Avatar style={{cursor:'pointer'}} className={classes.toolbarButtons} src="/broken-image.jpg" aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}/>
+            <Menu
+              className={classes.toolbarButtons}
+              id="simple-menu"
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+            >
+              <MenuItem >
+                <Row p={1.5} gap={2} borderRadius={5}>
+                  <Item>
+                    <Avatar
+                      classes={avatarStyles}
+                    />
+                  </Item>
+                  <Info position={'middle'} useStyles={useTutorInfoStyles}>
+                    <InfoTitle>User</InfoTitle>
+                    <InfoSubtitle>{email}</InfoSubtitle>
+                  </Info>
+                  <Item ml={1}  position={'middle'}>
+                    <HiStatusOnline className={classes.action} />
+                  </Item>
+                </Row>
+              </MenuItem>
+              <MenuItem onClick={handleLogOut}>
+                <Row  paddingLeft={2.8} gap={2} borderRadius={5}>
+                  Logout
+                </Row>
+              </MenuItem>
+            </Menu>
+          </Toolbar>
+        </AppBar>
+        <nav className={classes.drawer} aria-label="mailbox folders">
+          <Hidden smUp implementation="css">
+            <Drawer
+              container={container}
+              variant="temporary"
+              anchor={theme.direction === 'rtl' ? 'right' : 'left'}
+              open={mobileOpen}
+              onClose={handleDrawerToggle}
               classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
+                paper: classes.drawerPaper,
               }}
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </div>
-        </Toolbar>
-      </AppBar>
-      <nav className={classes.drawer} aria-label="mailbox folders">
-        <Hidden smUp implementation="css">
-          <Drawer
-            container={container}
-            variant="temporary"
-            anchor={theme.direction === 'rtl' ? 'right' : 'left'}
-            open={mobileOpen}
-            onClose={handleDrawerToggle}
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-            ModalProps={{
-              keepMounted: true,
-            }}
-          >
-            {drawer}
-          </Drawer>
-        </Hidden>
-        <Hidden xsDown implementation="css">
-          <Drawer
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-            variant="permanent"
-            open
-          >
-            {drawer}
-          </Drawer>
-        </Hidden>
-      </nav>
-      <main className={classes.content}>
-        <div className={classes.toolbar} />  
-        <ChatForm/>  
-      </main>
-    </div>
-  );
+              ModalProps={{
+                keepMounted: true,
+              }}
+            >
+              {drawer}
+            </Drawer>
+          </Hidden>
+          <Hidden xsDown implementation="css">
+            <Drawer
+              classes={{
+                paper: classes.drawerPaper,
+              }}
+              variant="permanent"
+              open
+            >
+              {drawer}
+            </Drawer>
+          </Hidden>
+        </nav>
+        <main className={classes.content}>
+          <div className={classes.toolbar} />  
+          <ChatForm/>  
+        </main>
+      </div>
+    );
+  }
+  
 }
 
 export default ResponsiveDrawer;
