@@ -16,6 +16,8 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { useNavigate } from "react-router-dom";
 import { createSocketConnectionInstance } from './connection';
+import { useAuth } from "../../middleware/UserProvider";
+import { generateUserDocument } from "../../firebase";
 const useStyles = makeStyles((theme) => ({
     root: {
       display: 'flex',
@@ -39,6 +41,9 @@ const useStyles = makeStyles((theme) => ({
 const VideoFeed = () =>{
     let socketInstance = React.useRef(null);
     const [user, setUser] = React.useState("dummy");
+    const {currentUser} = useAuth();
+    const {email} = currentUser;
+    const [displayName, setDisplayName]=useState("");
     const classes = useStyles();
     const [message, setMessage] = useState('');
     const [micStatus, setMicStatus] = useState(true);
@@ -51,9 +56,6 @@ const VideoFeed = () =>{
     const handleStartMeet = () => {
       setOpen(!openx);
     };
-    // useEffect(()=>{
-    //   if(socketInstance.current!=null) listenChat();
-    // });
     socketInstance.current?.socket.on('check-user-video-toggle', value => {
       console.log(value.userDatauserID +"video status"+ value.value);
 
@@ -77,17 +79,20 @@ const VideoFeed = () =>{
     }, [user]);
     const startCall=() => {
       socketInstance.current=createSocketConnectionInstance();
+      generateUserDocument(currentUser).then(res=>{
+          setDisplayName(res.Name);
+      });
     }
     const sendChat=()=>{
       // console.log(Date.now());
-      const newItem = {id: Date.now(),modifier:"me",text:message}
+      const newItem = {id: Date.now(),modifier:"me",text:message, user:'me'}
       setMessageItems(messageItems.concat(newItem));
-      socketInstance.current.sendMessage({message});
+      socketInstance.current.sendMessage({message,displayName});
       setMessage('');
       // console.log({message});
     }
     const listenChat=(getChat)=>{
-      const newItem = {id: Date.now(),modifier:"him",text:getChat.message}
+      const newItem = {id: Date.now(),modifier:"him",text:getChat.message, user:getChat.displayName}
       setMessageItems(messageItems.concat(newItem));
     }
     const endCall=() => {
@@ -173,7 +178,7 @@ const VideoFeed = () =>{
                     <ul ref={chatRef}>
                       {messageItems.map(messageItems => (
                         <li key={messageItems.id} className={messageItems.modifier}>
-                          {messageItems.text}
+                          {messageItems.user+": "+messageItems.text}
                         </li>
                       ))}
                     </ul>

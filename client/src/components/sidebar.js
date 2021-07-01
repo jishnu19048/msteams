@@ -149,7 +149,8 @@ const useStyles = makeStyles((theme) => ({
 
 function ResponsiveDrawer(props) {
   const {currentUser} = useAuth();
-  const {displayName, email} = currentUser;
+  const {email} = currentUser;
+  const [displayName, setDisplayName]=useState("");
   const [link, setLink] = useState("");
   const [loading,setLoading] = useState(true);
   const[open,setOpen] = useState(false);
@@ -163,6 +164,9 @@ function ResponsiveDrawer(props) {
   const iconBtnStyles = useSizedIconButtonStyles({ padding: 6 });
   const avatarStyles = useDynamicAvatarStyles({ radius: 12, size: 48 });
   useEffect(() => {
+    generateUserDocument(currentUser).then(res=>{
+        setDisplayName(res.Name);
+    });
     setLoading(false);
   })
   const handleClick = (event) => {
@@ -288,7 +292,7 @@ function ResponsiveDrawer(props) {
                     />
                   </Item>
                   <Info position={'middle'} useStyles={useTutorInfoStyles}>
-                    <InfoTitle>User</InfoTitle>
+                    <InfoTitle>{displayName}</InfoTitle>
                     <InfoSubtitle>{email}</InfoSubtitle>
                   </Info>
                   <Item ml={1}  position={'middle'}>

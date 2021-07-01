@@ -11,6 +11,9 @@ const firebaseConfig = {
   measurementId: "G-8VKHQEB2ZZ"
 };
   export const generateUserDocument = async (user, additionalData) => {
+    if(user.user==null){
+      return getUserDocument(user.uid);
+    }
     if (!user) return;
     const userRef = firestore.doc(`users/${user.user.uid}`);
     const snapshot = await userRef.get();

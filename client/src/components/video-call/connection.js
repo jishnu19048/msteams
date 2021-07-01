@@ -83,8 +83,8 @@ class Connection {
             }
         })
     }
-    sendMessage = (text) => {
-        this.socket.emit('chat', text);
+    sendMessage = (data) => {
+        this.socket.emit('chat', data);
     }
 
     getVideoAudioStream = (video=true, audio=true) => {

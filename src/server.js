@@ -36,9 +36,9 @@ io.on('connection', socket => {
         socket.on('disconnect', () => {
             socket.to(roomID).emit('disconnected', userID);
         });
-        socket.on('chat', (message) => {
-            console.log(message);
-            socket.to(roomID).emit('new-chat', {...message, userData});
+        socket.on('chat', (data) => {
+            console.log(data);
+            socket.to(roomID).emit('new-chat', {...data, userData});
         });
         // socket.on('reconnect-user', () => {
         //     socket.to(roomID).broadcast.emit('new-user-connect', userData);

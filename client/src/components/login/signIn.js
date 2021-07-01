@@ -19,6 +19,11 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import {useAuth} from "../../middleware/UserProvider";
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -53,9 +58,6 @@ const useStyles = makeStyles((theme) => ({
   loadingDiv: {
     position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)"
   },
-  loader:{
-
-  }
 }));
 
 export default function SignIn() {
@@ -64,7 +66,17 @@ export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const classes = useStyles();
+  const vertical='top';
+  const horizontal='center';
   const navigate =useNavigate();
+  const [openAlert, setOpenAlert] = React.useState(false);
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenAlert(false);
+  };
   useEffect(() => {
     auth
     .getRedirectResult()
@@ -99,6 +111,7 @@ export default function SignIn() {
       })
       .catch((error) => {
         setLoading(false);
+        setOpenAlert(true);
         console.error("Error signing in with password and email", error);
       });
     })
@@ -171,6 +184,11 @@ export default function SignIn() {
         <Box mt={8}>
           <Copyright />
         </Box>
+        <Snackbar anchorOrigin={{ vertical, horizontal }} open={openAlert} autoHideDuration={6000} onClose={handleClose}>
+          <Alert onClose={handleClose} severity="error">
+            You entered invalid credentials.
+          </Alert>
+        </Snackbar>
       </Container>
     );
     }else{
