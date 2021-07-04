@@ -41,12 +41,17 @@ import { Info, InfoTitle, InfoSubtitle } from '@mui-treasury/components/info';
 import { useTutorInfoStyles } from '@mui-treasury/styles/info/tutor';
 import { useSizedIconButtonStyles } from '@mui-treasury/styles/iconButton/sized';
 import { useDynamicAvatarStyles } from '@mui-treasury/styles/avatar/dynamic';
+import {ChannelList} from '../components/global-chat/channel-list';
+import {MessagesPanel} from '../components/global-chat/messageContainer';
+import openSocket from "socket.io-client";
+const SERVER = "http://127.0.0.1:8080";
 
 const drawerWidth = 100;
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
+    height: '90%'
   },
   drawer: {
     [theme.breakpoints.up('sm')]: {
@@ -151,19 +156,30 @@ function ResponsiveDrawer(props) {
   const {currentUser} = useAuth();
   const {email} = currentUser;
   const [displayName, setDisplayName]=useState("");
-  const [link, setLink] = useState("");
   const [loading,setLoading] = useState(true);
   const[open,setOpen] = useState(false);
   const[meetingName,setMeetingName] = useState("Your Meeting");
   const { window } = props;
+  const [user, setUser] = React.useState("dummy");
   const classes = useStyles();
   const theme = useTheme();
-  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const navigate =useNavigate();
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const iconBtnStyles = useSizedIconButtonStyles({ padding: 6 });
+  const [anchorEl, setAnchorEl] = useState(null);
   const avatarStyles = useDynamicAvatarStyles({ radius: 12, size: 48 });
+  const [channels,setChannels] = useState([{ id: 1, name: 'Test Channel', participants: 10 }])
+  const [channel,setChannel] = useState(null);
+  const [socket,setSocket] = useState(null);
   useEffect(() => {
+      return () => {
+        socket?.disconnect();
+      }
+  }, []);
+  useEffect(()=>{
+    if(user) configureSocket();
+  }, [user]);
+  useEffect(() => {
+    loadChannels();
     generateUserDocument(currentUser).then(res=>{
         setDisplayName(res.Name);
     });
@@ -172,7 +188,7 @@ function ResponsiveDrawer(props) {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
+  
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -195,6 +211,50 @@ function ResponsiveDrawer(props) {
     }).catch((error) => {
       console.log(error);
     });
+  }
+  const loadChannels = () => {
+        Axios.get(`http://localhost:8080/getChannels`).then(res => {
+            setChannels(res.data.channels);
+          })
+  };
+  const handleChannelSelect = id => {
+    // console.log("selected channel: "+ id);
+    let selectedChannel = channels.find(c => {
+        return c.id === id;
+    });
+    setChannel(selectedChannel);
+    socket?.emit('channel-join',id);
+  }
+  const configureSocket = () => {
+      var skt = openSocket.connect(SERVER);
+      skt.on('channel', channel => {
+          
+          let allChannels = channels;
+          allChannels.forEach(c => {
+              if (c.id === channel.id) {
+                  c.participants = channel.participants;
+              }
+          });
+          setChannels(channels);
+      });
+      skt.on('message', message => {
+              
+          let allChannels = channels;
+          allChannels.forEach(c => {
+              if (c.id === message.channel_id) {
+                  if (!c.messages) {
+                      c.messages = [message];
+                  } else {
+                      c.messages.push(message);
+                  }
+              }
+          });
+          setChannels(channels);
+      });
+      setSocket(skt);
+  }
+  const handleSendMessage = (channel_id, text) => {
+      socket?.emit('send-message', { channel_id, text, senderName: DisplayName, id: Date.now() });
   }
   const drawer = (
     <div>
@@ -340,7 +400,10 @@ function ResponsiveDrawer(props) {
         </nav>
         <main className={classes.content}>
           <div className={classes.toolbar} />  
-          <ChatForm/>  
+            <div className='chat-app'>
+                <ChannelList channels={channels} onSelectChannel={handleChannelSelect}/>
+                <MessagesPanel onSendMessage={handleSendMessage} channel={channels}/>
+            </div>
         </main>
       </div>
     );

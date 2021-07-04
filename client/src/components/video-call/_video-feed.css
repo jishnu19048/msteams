@@ -37,7 +37,7 @@
 
 video {
   height: 300px;
-  border-radius: 1rem;
+  /* border-radius: 1rem; */
   margin: 0.5rem;
   width: 400px;
   object-fit: cover;
@@ -46,6 +46,20 @@ video {
   -moz-transform: rotateY(180deg);
 }
 
+.circle {
+  background-color: #ccc;
+  border-radius: 50%;
+  height: 3rem;
+  text-align: center;
+  width: 3rem;
+}
+
+.initials {
+  font-size: calc(5rem / 3); /* 50% of parent */
+  line-height: 1;
+  position: relative;
+  top: calc(3rem / 4); /* 25% of parent */
+}
 .options {
   padding: 1rem;
   display: flex;
@@ -63,8 +77,6 @@ video {
   display:flex;
   margin-left: auto;
 }
-
-
 
 #video-grid {
   display: flex;

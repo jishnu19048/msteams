@@ -11,7 +11,6 @@ const VideoCallUI = () =>{
     }, []);
     return(
         <div className="video_ui">
-            <Header/>
             <VideoFeed/>
         </div>
     )

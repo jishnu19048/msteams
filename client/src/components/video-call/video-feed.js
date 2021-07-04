@@ -18,6 +18,11 @@ import { useNavigate } from "react-router-dom";
 import { createSocketConnectionInstance } from './connection';
 import { useAuth } from "../../middleware/UserProvider";
 import { generateUserDocument } from "../../firebase";
+import Avatar from '@material-ui/core/Avatar';
+import AvatarGroup from '@material-ui/lab/AvatarGroup';
+import ScreenShareIcon from '@material-ui/icons/ScreenShare';
+import StopScreenShareIcon from '@material-ui/icons/StopScreenShare';
+
 const useStyles = makeStyles((theme) => ({
     root: {
       display: 'flex',
@@ -42,7 +47,6 @@ const VideoFeed = () =>{
     let socketInstance = React.useRef(null);
     const [user, setUser] = React.useState("dummy");
     const {currentUser} = useAuth();
-    const {email} = currentUser;
     const [displayName, setDisplayName]=useState("");
     const classes = useStyles();
     const [message, setMessage] = useState('');
@@ -53,9 +57,9 @@ const VideoFeed = () =>{
     const [chatOpen, setChatOpen] = React.useState(true);
     const navigate =useNavigate();
     const [messageItems, setMessageItems] = React.useState([]);
-    const handleStartMeet = () => {
-      setOpen(!openx);
-    };
+    const [displayStream, setDisplayStream] = useState(false);
+    const [streaming, setStreaming] = useState(false);
+    
     socketInstance.current?.socket.on('check-user-video-toggle', value => {
       console.log(value.userDatauserID +"video status"+ value.value);
 
@@ -69,6 +73,7 @@ const VideoFeed = () =>{
       console.log(message);
       listenChat(message);
     })
+
     useEffect(() => {
         return () => {
             socketInstance.current?.endConnection();
@@ -77,11 +82,23 @@ const VideoFeed = () =>{
     useEffect(()=>{
       if(user) startCall();
     }, [user]);
+
+    const handleStartMeet = () => {
+      setOpen(!openx);
+    };
+
     const startCall=() => {
-      socketInstance.current=createSocketConnectionInstance();
       generateUserDocument(currentUser).then(res=>{
-          setDisplayName(res.Name);
+        setDisplayName(res.Name);
+        socketInstance.current=createSocketConnectionInstance({
+          updateInstance: updateFromInstance,
+          username: res.Name});
       });
+    }
+    const updateFromInstance = (key, value) => {
+        if (key === 'streaming') setStreaming(value);
+        if (key === 'message') setMessages([...value]);
+        if (key === 'displayStream') setDisplayStream(value);
     }
     const sendChat=()=>{
       // console.log(Date.now());
@@ -105,12 +122,35 @@ const VideoFeed = () =>{
       setCamStatus(!camStatus);
       socketInstance.current?.socket.emit('user-video-toggle',camStatus);
     }
+    const handleMyMic = () => {
+      const { toggleAudio } = socketInstance.current;
+      toggleAudio();
+      setMicStatus(!micStatus);
+    }
     const hideChat = () => {
       setChatOpen(!chatOpen);
     }
+    const toggleScreenShare = () => {
+        const { reInitializeStream, toggleVideoTrack } = socketInstance.current;
+        displayStream && toggleVideoTrack({video: false, audio: true});
+        reInitializeStream(false, true, !displayStream ? 'displayMedia' : 'userMedia').then(() => {
+            setDisplayStream(!displayStream);
+            setCamStatus(false);
+        });
+    }
     const link=window.location.href;
     return (
-        <div>  
+        <div> 
+          <div className="header">
+            <div className="logo">
+              <AvatarGroup id="userList" max={1}>
+              </AvatarGroup>
+              <div className="header__back">
+                <i className="fas fa-angle-left" />
+              </div>
+              {/* <h3>{meetingName}</h3> */}
+            </div>
+          </div> 
           <div className="main">  
             <div className="main__left">
               <div className="videos__group">
@@ -126,8 +166,19 @@ const VideoFeed = () =>{
                         {!camStatus && <VideocamIcon/>
                         }
                     </Fab>
-                    <Fab className={classes.options__button}>
-                        <MicOffIcon />
+                    <Fab className={classes.options__button} onClick={handleMyMic}>
+                        {micStatus &&
+                          <MicOffIcon />
+                        }
+                        {!micStatus && <MicIcon/>
+                        }
+                    </Fab>
+                    <Fab className={classes.options__button} onClick={toggleScreenShare}>
+                        {!displayStream &&
+                          <ScreenShareIcon />
+                        }
+                        {displayStream && <StopScreenShareIcon/>
+                        }
                     </Fab>
                     
                 </div>
@@ -170,6 +221,7 @@ const VideoFeed = () =>{
                     </Button>
                   </DialogActions>
                 </Dialog>
+
               </div>
             </div>
             <div className="main__right">

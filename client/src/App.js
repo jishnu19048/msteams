@@ -13,7 +13,8 @@ function App() {
   return (
     <UserProvider>
       <BrowserRouter>
-        <div className="app">
+        <div className="App">
+          
           <Routes>
             <PrivateRoute path='/' component={Sidebar}/>
             <PrivateRoute path='/join/*' component={VideoCallUI}/>
