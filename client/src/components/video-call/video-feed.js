@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef  } from 'react';
 import './_video-feed.css';
-import './_chat.css';
+import './chat-sidebar.scss';
+import { Button, Drawer, Input } from '@material-ui/core';
 import SendIcon from '@material-ui/icons/Send';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import ChatIcon from '@material-ui/icons/Chat';
@@ -9,11 +10,11 @@ import VideocamOffIcon from '@material-ui/icons/VideocamOff';
 import MicOffIcon from '@material-ui/icons/MicOff';
 import MicIcon from '@material-ui/icons/Mic';
 import CallEndIcon from '@material-ui/icons/CallEnd';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import Fab from '@material-ui/core/Fab';
 import { makeStyles } from '@material-ui/core/styles';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions  } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
 import { useNavigate } from "react-router-dom";
 import { createSocketConnectionInstance } from './connection';
 import { useAuth } from "../../middleware/UserProvider";
@@ -59,6 +60,7 @@ const VideoFeed = () =>{
     const [messageItems, setMessageItems] = React.useState([]);
     const [displayStream, setDisplayStream] = useState(false);
     const [streaming, setStreaming] = useState(false);
+    const [chatToggle, setChatToggle] = useState(false);
     
     socketInstance.current?.socket.on('check-user-video-toggle', value => {
       console.log(value.userDatauserID +"video status"+ value.value);
@@ -138,6 +140,9 @@ const VideoFeed = () =>{
             setCamStatus(false);
         });
     }
+    const chatHandle = (bool) => {
+        setChatToggle(bool);
+    }
     const link=window.location.href;
     return (
         <div> 
@@ -191,7 +196,7 @@ const VideoFeed = () =>{
                     <Fab className={classes.options__button} onClick={handleStartMeet}>
                         <PersonAddIcon/>
                     </Fab>
-                    <Fab className={classes.options__button} onClick={hideChat}>
+                    <Fab className={classes.options__button}  onClick={() => chatHandle(!chatToggle)}>
                         <ChatIcon/>
                     </Fab>
                 </div>
@@ -224,7 +229,7 @@ const VideoFeed = () =>{
 
               </div>
             </div>
-            <div className="main__right">
+            {/* <div className="main__right">
                 <div className="main__chat_window">
                   <div className="messages">
                     <ul ref={chatRef}>
@@ -242,7 +247,43 @@ const VideoFeed = () =>{
                     <SendIcon onClick={sendChat}/>
                 </Fab>
                 </div>
-            </div>
+            </div> */}
+            <Drawer className="chat-drawer" anchor={'right'} open={chatToggle} onClose={() => chatHandle(false)}>
+                <div className="chat-head-wrapper">
+                    <div className="chat-drawer-back-icon" onClick={() => chatHandle(false)}>
+                        <ChevronRightIcon/>
+                    </div>
+                    <div className="chat-header">
+                        <ChatIcon></ChatIcon>
+                    </div>
+                </div>
+                <div className="chat-drawer-list">
+                    <div className="messages">
+                      <ul ref={chatRef}>
+                        {messageItems.map(messageItems => (
+                          <li key={messageItems.id} className={messageItems.modifier}>
+                            <div><i>{messageItems.user} , {new Date(new Date().getTime()).toLocaleTimeString()}</i></div>
+                            <span>{messageItems.text}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                </div>
+                {/* <List className="chat-drawer-list">
+                    
+                </List> */}
+                <div className="chat-drawer-input-wrapper">
+                    <Input 
+                        className="chat-drawer-input" 
+                        onChange={event => setMessage(event.target.value)} 
+                        value={message}
+                        placeholder="Type Here"
+                    />
+                    <Fab id="send" className={classes.options__button}>
+                        <SendIcon onClick={sendChat}/>
+                    </Fab>
+                </div>
+            </Drawer>
           </div>
         </div>
       );

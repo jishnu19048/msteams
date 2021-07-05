@@ -4,6 +4,7 @@ import './style.scss';
 export class ChannelList extends React.Component {
 
     handleClick = id => {
+        // console.log(id)
         this.props.onSelectChannel(id);
     }
 

@@ -8,12 +8,14 @@ var STATIC_CHANNELS = [{
     name: 'Microsoft Engage 2021',
     participants: 0,
     id: 1,
-    sockets: []
+    sockets: [],
+    link: "6bc2fe22-a9b2-46b8-baab-961fb293549d"
 }, {
     name: 'Test Channel',
     participants: 0,
     id: 2,
-    sockets: []
+    sockets: [],
+    link: "fe7acefb-b805-4ff2-808c-c3288f5af0a0"
 }];
 //enabling cors
 const io = require("socket.io")(server, {
@@ -78,7 +80,11 @@ io.on('connection', socket => {
             }
         });
         return id;
-    })
+    });
+    socket.on('send-message', message => {
+        console.log(message);
+        io.emit('message', message);
+    });
     socket.on('disconnect', () => {
         STATIC_CHANNELS.forEach(c => {
             let index = c.sockets.indexOf(socket.id);

@@ -1,8 +1,10 @@
 
 .chat-app {
-    width: 100%;
+    width: 80%;
     height: 100%;
     display: flex;
+    margin-left: 10%;
+    justify-content: center;
 
     .no-content-message {
         color: #cccccc;
@@ -14,6 +16,7 @@
 
     .channel-list {
         width: calc(20% - 12px);
+        min-width: 135px;
         border: 1px solid rgb(224, 224, 224);
         margin: 10px;
         margin-right: 0;
@@ -21,19 +24,26 @@
         height: calc(100% - 22px);
         background-color: rgb(243, 239, 239);
     }
-
-    .channel-item {
+    .row {
+        display: flex;
         border-bottom: 1px solid rgb(224, 224, 224);
         padding: 10px;
-
-        div {
-            font-weight: bold;
+        .chat-icon{
+            margin: 10px 10px;
+            color:rgb(95, 83, 145);
+            float: left;
         }
-
-        span {
-            font-size: 10px;
+        .channel-item {
+            padding: 10px;
+            div {
+                font-weight: bold;
+            }
+    
+            span {
+                font-size: 10px;
+                color:rgb(97, 96, 96);
+            }
         }
-
         &:hover {
             background-color: rgb(199, 194, 219);
             cursor: pointer;
@@ -50,46 +60,109 @@
         flex-direction: column;
         align-items: flex-start;
         background-color: white;
+        -webkit-box-shadow: 0 0px 6px 0px rgb(170, 170, 170);
+        -moz-box-shadow: 0 0px 6px 0px rgb(170, 170, 170);
+        box-shadow: 0 0px 6px 0px rgb(170, 170, 170);
+        .messages-header {
+            width: 100%;
+            height: 50px;
+            border-top: 1px solid rgb(224, 224, 224);
+            background-color: #f0f0f0;
+            display: flex;
+            button {
+                margin: 5px 10px;
+                background-color: #a590f1;
+                color: rgb(0, 0, 0);
+                border-radius: 1000;
+                padding: 8px 8px;
 
+                &:hover {
+                    cursor: pointer;
+                    background-color: #beadfc;
+                }
+            }
+        }
         .meesages-list {
             align-self: stretch;
             height: 100%;
+            overflow: auto;
+            .message-item-him{
+                float: left;
+                margin: 0;
+                padding: 10px;
+                span{
+                    clear: both;
+                    padding: 12px;
+                    border-radius: 30px;
+                    margin-bottom: 2px;
+                    font-family: Helvetica, Arial, sans-serif;
+                    border-top-left-radius: 5px;
+                    border-bottom-left-radius: 30px;
+                    background: rgb(204, 204, 204);
+                    float: left;
+                }
+                div {
+                    font-size: 10px;
+                    color:rgb(97, 96, 96);
+                }
+            }
+            .message-item{
+                float: right;
+                margin: 0;
+                padding: 10px;
+                span{
+                    
+                    clear: both;
+                    padding: 12px;
+                    border-radius: 30px;
+                    margin-bottom: 2px;
+                    font-family: Helvetica, Arial, sans-serif;
+                    float: right;
+                    background: rgb(95, 83, 145);
+                    color: #fff;
+                    border-top-right-radius: 5px;
+                    border-bottom-right-radius: 30px;
+                }
+                div {
+                    font-size: 10px;
+                    color:rgb(97, 96, 96);
+                }
+            }
+            
         }
 
         .messages-input {
             width: 100%;
-            height: 40px;
+            height: 50px;
             border-top: 1px solid rgb(224, 224, 224);
             background-color: #f0f0f0;
             display: flex;
 
             input {
                 margin: auto;
-                height: 20px;
+                height: 30px;
                 width: 100%;
                 margin-left: 15px;
-                border-radius: 15px;
+                border-radius: 5px;
                 border: 1px solid rgb(224, 224, 224);
 
                 &:focus {
-                    border-radius: 15px;
-                    border: 2px solid #66a6ff;
+                    border-radius: 5px;
+                    border: 2px solid #beadfc;
                     outline: none;
                 }
             }
 
             button {
-                width: 60px;
-                margin: auto 10px;
-                background-color: #0e62da;
-                color: white;
-                border: 1px solid;
-                border-radius: 10px;
-                padding: 5px 13px;
+                margin: 5px 10px;
+                // background-color: #0e62da;
+                color: rgb(88, 88, 88);
+                border-radius: 1000;
+                padding: 8px 8px;
 
                 &:hover {
                     cursor: pointer;
-                    background-color: #66a6ff;
+                    background-color: #beadfc;
                 }
             }
         }
