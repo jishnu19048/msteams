@@ -30,7 +30,7 @@ import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions  }
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import ChromeReaderModeIcon from '@material-ui/icons/ChromeReaderMode';
-// import StartVideo from './startVideo';
+import Snackbar from '@material-ui/core/Snackbar';
 import ChatForm from './chat-form';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../middleware/UserProvider";
@@ -41,11 +41,14 @@ import { Info, InfoTitle, InfoSubtitle } from '@mui-treasury/components/info';
 import { useTutorInfoStyles } from '@mui-treasury/styles/info/tutor';
 import { useSizedIconButtonStyles } from '@mui-treasury/styles/iconButton/sized';
 import { useDynamicAvatarStyles } from '@mui-treasury/styles/avatar/dynamic';
+import MuiAlert from '@material-ui/lab/Alert';
 import {Chat} from './chat-room';
 const SERVER = "http://127.0.0.1:8080";
 
 const drawerWidth = 100;
-
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -163,7 +166,11 @@ function ResponsiveDrawer(props) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate =useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
-  const avatarStyles = useDynamicAvatarStyles({ radius: 12, size: 48 });  
+  const [prompt, setPrompt] = useState(false);
+  const avatarStyles = useDynamicAvatarStyles({ radius: 12, size: 48 }); 
+  const vertical='top';
+  const horizontal='center';
+
   useEffect(() => {
     generateUserDocument(currentUser).then(res=>{
         setDisplayName(res.Name);
@@ -197,10 +204,19 @@ function ResponsiveDrawer(props) {
       console.log(error);
     });
   }
+  const handleJoinMeeting = (room_id) => {
+    navigate(`/join/${room_id}`);
+  }
+  const showCopiedPrompt = () => {
+    setPrompt(true);
+  }
+  const closePrompt = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
 
-
-  
-  
+    setPrompt(false);
+  };
   const drawer = (
     <div>
       <div className={classes.toolbar} />
@@ -345,8 +361,13 @@ function ResponsiveDrawer(props) {
         </nav>
         <main className={classes.content}>
           <div className={classes.toolbar} /> 
-          <Chat username={email}/> 
+          <Chat username={email} onCopied={showCopiedPrompt} joinMeeting={handleJoinMeeting}/> 
         </main>
+        <Snackbar  anchorOrigin={{ vertical, horizontal }} open={prompt} autoHideDuration={6000} onClose={closePrompt}>
+          <Alert onClose={closePrompt} severity="info">
+            Invite-link copied to clipboard.
+          </Alert>
+        </Snackbar>
       </div>
     );
   }

@@ -9,7 +9,7 @@
     .no-content-message {
         color: #cccccc;
         font-style: italic;
-        font-size: 20px;
+        font-size: 16px;
         text-align: center;
         margin: 20px;
     }
@@ -23,6 +23,13 @@
         border-right: none;
         height: calc(100% - 22px);
         background-color: rgb(243, 239, 239);
+        .loadingDiv{
+            position: "fixed";
+            top: "50%";
+            left: "50%";
+            padding-top:30px;
+            transform: "translate(-50%, -50%)"
+        }
     }
     .row {
         display: flex;
@@ -70,26 +77,33 @@
             background-color: #f0f0f0;
             display: flex;
             button {
-                margin: 5px 10px;
-                background-color: #a590f1;
+                margin: 5px 5px;
+                // background-color: #a590f1;
                 color: rgb(0, 0, 0);
                 border-radius: 1000;
                 padding: 8px 8px;
 
                 &:hover {
                     cursor: pointer;
-                    background-color: #beadfc;
+                    background-color: #dfd8fa;
                 }
+            }
+            .channel-name{
+                margin: auto;
+                margin-left:  15px;
+                color: rgb(68, 68, 68);
             }
         }
         .meesages-list {
+            list-style: none;
             align-self: stretch;
             height: 100%;
             overflow: auto;
+            
             .message-item-him{
-                float: left;
+                
                 margin: 0;
-                padding: 10px;
+                padding: 20px;
                 span{
                     clear: both;
                     padding: 12px;
@@ -102,14 +116,16 @@
                     float: left;
                 }
                 div {
+                    clear:both;
+                    float: left;
                     font-size: 10px;
                     color:rgb(97, 96, 96);
                 }
             }
             .message-item{
-                float: right;
+                
                 margin: 0;
-                padding: 10px;
+                padding: 20px;
                 span{
                     
                     clear: both;
@@ -124,6 +140,8 @@
                     border-bottom-right-radius: 30px;
                 }
                 div {
+                    clear:both;
+                    float: right;
                     font-size: 10px;
                     color:rgb(97, 96, 96);
                 }

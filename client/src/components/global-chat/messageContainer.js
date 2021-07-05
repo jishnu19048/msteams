@@ -3,19 +3,30 @@ import { Message } from './message';
 import IconButton from '@material-ui/core/IconButton';
 import SendIcon from '@material-ui/icons/Send';
 import VideocamIcon from '@material-ui/icons/Videocam';
+import PersonAddIcon from '@material-ui/icons/PersonAdd';
+import copy from "copy-to-clipboard"; 
 import './style.scss';
 
 export class MessagesPanel extends React.Component {
     state = { input_value: '' }
     send = () => {
         if (this.state.input_value && this.state.input_value != '') {
-            this.props.onSendMessage(this.props.channel.id, this.state.input_value);
+            this.props.onSendMessage(this.props.channel._id, this.state.input_value);
             this.setState({ input_value: '' });
         }
     }
 
+    redirect = () => {
+        this.props.onRedirect(this.props.channel.link);
+    } 
+
     handleInput = e => {
         this.setState({ input_value: e.target.value });
+    }
+    copyToClipBoard = () => {
+        copy('http://localhost:3000/?invite='+this.props.channel._id);
+        this.props.promptCopied();
+        console.log("hi");
     }
 
     render() {
@@ -27,11 +38,17 @@ export class MessagesPanel extends React.Component {
         }
         return (
             <div className='messages-panel'>
-                <div className="messages-header">
-                    <IconButton onClick={this.send} aria-label="delete">
-                        <VideocamIcon />
-                    </IconButton>
-                </div>
+                {this.props.channel &&
+                    <div className="messages-header">
+                        <IconButton onClick={this.redirect} aria-label="delete">
+                            <VideocamIcon />
+                        </IconButton>
+                        <IconButton  onClick={this.copyToClipBoard} aria-label="delete">
+                            <PersonAddIcon />
+                        </IconButton>
+                        <h3 className="channel-name">{this.props.channel.name}</h3>
+                    </div>
+                }
                 <ul className="meesages-list">{list}</ul>
                 {this.props.channel &&
                     <div className="messages-input">

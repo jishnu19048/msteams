@@ -194,7 +194,7 @@ export default function SignIn() {
     }else{
       return(
         <div className={classes.loadingDiv}>
-          <CircularProgress size={200} color="secondary" />
+          <CircularProgress size={100} color="secondary" />
         </div>
       )
     }
