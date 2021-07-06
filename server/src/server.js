@@ -62,7 +62,7 @@ app.get("/getUserChannels/:username", (req, res) => {
         res.send(allUserChannels);
     });
 });
-//API to create channel and join channel
+//API to create user and join to default channel
 app.post("/createUser", (req,res) =>{
     MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, async function(err, db) {
         if (err) throw err;
@@ -80,6 +80,7 @@ app.post("/createUser", (req,res) =>{
         res.send();
     })
 })
+//API to create channel and join channel
 app.post("/createAndAddChannel", (req,res) => {
     MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, async function(err, db) {
         if (err) throw err;
