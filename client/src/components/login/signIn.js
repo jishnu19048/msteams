@@ -10,6 +10,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
@@ -22,6 +23,7 @@ import {useAuth} from "../../middleware/UserProvider";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
@@ -39,8 +41,19 @@ function Copyright() {
 }
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    height: '100%',
+  },
+  image: {
+    backgroundImage: 'url(https://images.unsplash.com/photo-1617556886697-87121b816677?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80)',
+    backgroundRepeat: 'no-repeat',
+    backgroundColor:
+      theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+  },
   paper: {
-    marginTop: theme.spacing(8),
+    marginTop: theme.spacing(8,4),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -50,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.secondary.main,
   },
   form: {
-    width: '100%', // Fix IE 11 issue.
+    width: '80%', // Fix IE 11 issue.
     marginTop: theme.spacing(1),
   },
   submit: {
@@ -124,78 +137,81 @@ export default function SignIn() {
   };
   if(!loading){
     return (
-      <Container  color="red" component="main" maxWidth="xs">
+      <Grid container  color="red" component="main" maxWidth="xs" className={classes.root}>
         <CssBaseline />
-        <div className={classes.paper}>
-          <Avatar  className={classes.avatar}>
-            <SiMicrosoftteams />
-          </Avatar >
-          <Typography style={{ fontWeight: 600 }} component="h1" variant="h4">
-            Sign in
-          </Typography>
-          <form className={classes.form} noValidate>
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              onChange={event => setEmail(event.target.value)}
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-            />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              onChange={event => setPassword(event.target.value)}
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
-            
-            <Button
-              fullWidth
-              variant="contained"
-              color="primary"
-              onClick={handleSignIn}
-              className={classes.submit}
-            >
-              Sign In
-            </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
+        <Grid item xs={false} sm={4} md={7} className={classes.image} />
+        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+          <div className={classes.paper}>
+            <Avatar  className={classes.avatar}>
+              <SiMicrosoftteams />
+            </Avatar >
+            <Typography style={{ fontWeight: 600 }} component="h1" variant="h4">
+              Sign in
+            </Typography>
+            <form className={classes.form} noValidate>
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                onChange={event => setEmail(event.target.value)}
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                autoFocus
+              />
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                onChange={event => setPassword(event.target.value)}
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+              />
+              
+              <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                onClick={handleSignIn}
+                className={classes.submit}
+              >
+                Sign In
+              </Button>
+              <Grid container>
+                <Grid item xs>
+                  <Link href="#" variant="body2">
+                    Forgot password?
+                  </Link>
+                </Grid>
+                <Grid item>
+                  <Link href="/SignUp" variant="body2">
+                    {"Don't have an account? Sign Up"}
+                  </Link>
+                </Grid>
               </Grid>
-              <Grid item>
-                <Link href="/SignUp" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid>
-            </Grid>
-          </form>
-        </div>
-        <Box mt={8}>
-          <Copyright />
-        </Box>
-        <Snackbar anchorOrigin={{ vertical, horizontal }} open={openAlert} autoHideDuration={6000} onClose={handleClose}>
-          <Alert onClose={handleClose} severity="error">
-            You entered invalid credentials.
-          </Alert>
-        </Snackbar>
-      </Container>
+              <Box mt={8}>
+                <Copyright />
+              </Box>
+              <Snackbar anchorOrigin={{ vertical, horizontal }} open={openAlert} autoHideDuration={6000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity="error">
+                  You entered invalid credentials.
+                </Alert>
+              </Snackbar>
+            </form>
+          </div>
+        </Grid>
+      </Grid>
     );
     }else{
       return(
         <div className={classes.loadingDiv}>
-          <CircularProgress size={100} color="secondary" />
+          <CircularProgress size={100}  />
         </div>
       )
     }

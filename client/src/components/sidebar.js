@@ -265,7 +265,7 @@ function ResponsiveDrawer(props) {
   if(loading){
     return(
       <div className={classes.loadingDiv}>
-        <CircularProgress size={200} color="secondary" />
+        <CircularProgress size={100} />
       </div>
     )
   }else{

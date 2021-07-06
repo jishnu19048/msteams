@@ -7,15 +7,21 @@
     justify-content: center;
 
     .no-content-message {
-        color: #cccccc;
+        color: #b8b6b6;
         font-style: italic;
         font-size: 16px;
         text-align: center;
         margin: 20px;
     }
+    .time-message {
+        color: #b8b6b6;
+        font-size: 15px;
+        text-align: center;
+        margin: 20px;
+    }
 
     .channel-list {
-        width: calc(20% - 12px);
+        width: calc(35% - 12px);
         min-width: 135px;
         border: 1px solid rgb(224, 224, 224);
         margin: 10px;
@@ -23,6 +29,8 @@
         border-right: none;
         height: calc(100% - 22px);
         background-color: rgb(243, 239, 239);
+        overflow: auto;
+        overflow-x: hidden;
         .loadingDiv{
             position: "fixed";
             top: "50%";
@@ -72,25 +80,28 @@
         box-shadow: 0 0px 6px 0px rgb(170, 170, 170);
         .messages-header {
             width: 100%;
-            height: 50px;
+            height: 80px;
             border-top: 1px solid rgb(224, 224, 224);
             background-color: #f0f0f0;
             display: flex;
             button {
                 margin: 5px 5px;
+                border-radius: 1000px;
                 // background-color: #a590f1;
                 color: rgb(0, 0, 0);
                 border-radius: 1000;
-                padding: 8px 8px;
+                padding: 8px 5px;
 
                 &:hover {
                     cursor: pointer;
-                    background-color: #dfd8fa;
+                    color: rgb(95, 83, 145);
+                    background-color:#f0f0f0;
                 }
             }
             .channel-name{
                 margin: auto;
-                margin-left:  15px;
+                margin-left:  20px;
+                margin-right:20px;
                 color: rgb(68, 68, 68);
             }
         }

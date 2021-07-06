@@ -31,8 +31,10 @@ export class MessagesPanel extends React.Component {
 
     render() {
 
-        let list = <div className="no-content-message">Select a channel to talk into or create your own and invite your friends.</div>;
-
+        let list = <div className="no-content-message">Select a channel to talk into or start a new meeting.</div>;
+        if (this.props.channel) {
+            list = <div className="time-message">{new Date().toLocaleString()}</div>;
+        }
         if (this.props.channel && this.props.channel.messages) {
             list = this.props.channel.messages.map(m => <Message key={m.id} id={m.id} senderName={m.senderName} text={m.text} myUserName={this.props.myUserName}/>);
         }

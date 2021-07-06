@@ -63,6 +63,23 @@ app.get("/getUserChannels/:username", (req, res) => {
     });
 });
 //API to create channel and join channel
+app.post("/createUser", (req,res) =>{
+    MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, async function(err, db) {
+        if (err) throw err;
+        var dbo = db.db("ms_teams");
+        var query = { username: req.body.username, channels: [{id: ObjectID("60e2db98f42957715cdd7087"), name: "Microsoft Engage 2021"}] };
+        await dbo.collection("user_channels").insertOne(query);
+        console.log("user created");
+        const myDetails=await dbo.collection("user_channels").find({username: req.body.username}).toArray();
+        await dbo.collection("channel").updateOne(
+            { _id: ObjectID("60e2db98f42957715cdd7087") },
+            { $push: {"participants": ObjectID(myDetails[0]._id)}}
+        )
+        console.log("user added to enagage channel");
+        //successfully user created
+        res.send();
+    })
+})
 app.post("/createAndAddChannel", (req,res) => {
     MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, async function(err, db) {
         if (err) throw err;

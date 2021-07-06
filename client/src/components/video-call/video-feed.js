@@ -25,6 +25,7 @@ import AvatarGroup from '@material-ui/lab/AvatarGroup';
 import ScreenShareIcon from '@material-ui/icons/ScreenShare';
 import StopScreenShareIcon from '@material-ui/icons/StopScreenShare';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import IconButton from '@material-ui/core/IconButton';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -179,41 +180,41 @@ const VideoFeed = () =>{
               </div>
               <div className="options">
                 <div className="options__left">
-                    <Fab className={classes.options__button} onClick={handleCam}>
+                    <IconButton className={classes.options__button} onClick={handleCam}>
                         {camStatus &&
-                          <VideocamOffIcon />
+                          <VideocamOffIcon style={{fill: "white"}}/>
                         }
-                        {!camStatus && <VideocamIcon/>
+                        {!camStatus && <VideocamIcon style={{fill: "white"}}/>
                         }
-                    </Fab>
-                    <Fab className={classes.options__button} onClick={handleMyMic}>
+                    </IconButton>
+                    <IconButton className={classes.options__button} onClick={handleMyMic}>
                         {micStatus &&
-                          <MicOffIcon />
+                          <MicOffIcon style={{fill: "white"}}/>
                         }
-                        {!micStatus && <MicIcon/>
+                        {!micStatus && <MicIcon style={{fill: "white"}}/>
                         }
-                    </Fab>
-                    <Fab className={classes.options__button} onClick={toggleScreenShare}>
+                    </IconButton>
+                    <IconButton className={classes.options__button} onClick={toggleScreenShare}>
                         {!displayStream &&
-                          <ScreenShareIcon />
+                          <ScreenShareIcon style={{fill: "white"}}/>
                         }
-                        {displayStream && <StopScreenShareIcon/>
+                        {displayStream && <StopScreenShareIcon style={{fill: "white"}}/>
                         }
-                    </Fab>
+                    </IconButton>
                     
                 </div>
                 <div className="options__mid" onClick={endCall}>
-                    <Fab color="secondary" className={classes.options__button}>
+                    <IconButton color="secondary" className={classes.options__button}>
                         <CallEndIcon/>
-                    </Fab>
+                    </IconButton>
                 </div>
                 <div className="options__right">
-                    <Fab className={classes.options__button} onClick={handleStartMeet}>
-                        <PersonAddIcon/>
-                    </Fab>
-                    <Fab className={classes.options__button}  onClick={() => chatHandle(!chatToggle)}>
-                        <ChatIcon/>
-                    </Fab>
+                    <IconButton className={classes.options__button} onClick={handleStartMeet}>
+                        <PersonAddIcon style={{fill: "white"}}/>
+                    </IconButton>
+                    <IconButton className={classes.options__button}  onClick={() => chatHandle(!chatToggle)}>
+                        <ChatIcon style={{fill: "white"}}/>
+                    </IconButton>
                 </div>
                 <Dialog  open={openx} onClose={handleStartMeet} aria-labelledby="form-dialog-title">
                   <DialogTitle id="form-dialog-title">Jishnu's Meeting</DialogTitle>
@@ -282,9 +283,9 @@ const VideoFeed = () =>{
                         value={message}
                         placeholder="Type Here"
                     />
-                    <Fab id="send" className={classes.options__button}>
-                        <SendIcon onClick={sendChat}/>
-                    </Fab>
+                    <IconButton id="send" className={classes.options__button}>
+                        <SendIcon onClick={sendChat} style={{fill: "white"}}/>
+                    </IconButton>
                 </div>
             </Drawer>
           </div>

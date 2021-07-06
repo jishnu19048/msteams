@@ -29,18 +29,19 @@ export class Chat extends React.Component {
         });
         socket.on('channel', channel => {
             
-            let channels = this.state.channels;
-            channels.forEach(c => {
+            let allChannels = this.state.channels;
+            allChannels.forEach(c => {
                 if (c._id === channel.id) {
                     c.participants = channel.participants;
                 }
             });
-            this.setState({ channels });
+            this.setState({ channels: allChannels });
         });
         socket.on('message', message => {
             
-            let channels = this.state.channels
-            channels.forEach(c => {
+            let allChannels = this.state.channels
+            console.log(allChannels)
+            allChannels?.forEach(c => {
                 if (c._id === message.channel_id) {
                     if (!c.messages) {
                         c.messages = [message];
@@ -49,16 +50,16 @@ export class Chat extends React.Component {
                     }
                 }
             });
-            this.setState({ channels });
+            console.log("check")
+            this.setState({ channels: allChannels });
         });
         this.socket = socket;
     }
 
     loadChannels = async () => {
         fetch('http://localhost:8080/getUserChannels/'+this.props.username).then(async response => {
-            let data = await response.json();
-            // console.log(data);
-            this.setState({ channels: data });
+            console.log("channels fetched!");
+            this.setState({ channels: await response.json() });
         })
         
     }

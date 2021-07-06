@@ -13,7 +13,7 @@ export class Channel extends React.Component {
                 <ChatIcon className='chat-icon'/>
                 <div className='channel-item' onClick={this.click}>
                     <div>{this.props.name}</div>
-                    <span >{this.props.participants} active</span>
+                    <span >{this.props.participants} members</span>
                 </div>
             </div>
         )
