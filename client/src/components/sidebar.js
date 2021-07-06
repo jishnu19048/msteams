@@ -194,8 +194,8 @@ function ResponsiveDrawer(props) {
     setLoading(true);
         Axios.get(`http://localhost:8080/`).then(res => {
           setLoading(false);
-            navigate(`/join/${res.data.link}?name=${meetingName}`);
-          })
+          navigate(`/join/${res.data.link}?name=${meetingName}`);
+        })
   };
   const handleLogOut = () => {
     auth.signOut().then(() => {

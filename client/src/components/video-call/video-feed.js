@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef  } from 'react';
 import './_video-feed.css';
 import './chat-sidebar.scss';
+import Axios from 'axios';
 import { Button, Drawer, Input } from '@material-ui/core';
 import SendIcon from '@material-ui/icons/Send';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
@@ -23,6 +24,7 @@ import Avatar from '@material-ui/core/Avatar';
 import AvatarGroup from '@material-ui/lab/AvatarGroup';
 import ScreenShareIcon from '@material-ui/icons/ScreenShare';
 import StopScreenShareIcon from '@material-ui/icons/StopScreenShare';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -48,6 +50,7 @@ const VideoFeed = () =>{
     let socketInstance = React.useRef(null);
     const [user, setUser] = React.useState("dummy");
     const {currentUser} = useAuth();
+    const {email} = currentUser;
     const [displayName, setDisplayName]=useState("");
     const classes = useStyles();
     const [message, setMessage] = useState('');
@@ -61,6 +64,7 @@ const VideoFeed = () =>{
     const [displayStream, setDisplayStream] = useState(false);
     const [streaming, setStreaming] = useState(false);
     const [chatToggle, setChatToggle] = useState(false);
+    const [loading, setLoading] = useState(true);
     
     socketInstance.current?.socket.on('check-user-video-toggle', value => {
       console.log(value.userDatauserID +"video status"+ value.value);
@@ -83,6 +87,17 @@ const VideoFeed = () =>{
     }, []);
     useEffect(()=>{
       if(user) startCall();
+      Axios.post('http://localhost:8080/createAndAddChannel', {
+        username: email,
+        link: window.location.href.slice(27,27+36)
+      })
+      .then(function (response) {
+        console.log(response);
+        setLoading(false);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
     }, [user]);
 
     const handleStartMeet = () => {
@@ -215,6 +230,7 @@ const VideoFeed = () =>{
                     />
                   </DialogContent>
                   <DialogActions className={classes.AlignDialogActions}>
+                    {!loading &&
                       <Button
                           variant="contained"
                           color="primary"
@@ -224,30 +240,17 @@ const VideoFeed = () =>{
                         >
                           Okay
                     </Button>
+                    }
+                    {loading &&
+                    <div className='loadingDiv'>
+                      <CircularProgress size={40} />
+                    </div>
+                    }
                   </DialogActions>
                 </Dialog>
 
               </div>
             </div>
-            {/* <div className="main__right">
-                <div className="main__chat_window">
-                  <div className="messages">
-                    <ul ref={chatRef}>
-                      {messageItems.map(messageItems => (
-                        <li key={messageItems.id} className={messageItems.modifier}>
-                          {messageItems.user+": "+messageItems.text}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-                <div className="main__message_container">
-                <input id="chat_message" value={message} onChange={event => setMessage(event.target.value)} type="text" autoComplete="off" placeholder="Type here..." />
-                <Fab id="send" className={classes.options__button}>
-                    <SendIcon onClick={sendChat}/>
-                </Fab>
-                </div>
-            </div> */}
             <Drawer className="chat-drawer" anchor={'right'} open={chatToggle} onClose={() => chatHandle(false)}>
                 <div className="chat-head-wrapper">
                     <div className="chat-drawer-back-icon" onClick={() => chatHandle(false)}>

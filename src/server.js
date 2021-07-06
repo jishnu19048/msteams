@@ -74,7 +74,7 @@ app.post("/createAndAddChannel", (req,res) => {
         const channelCheck=await dbo.collection("channel").find(query).toArray();
         //if channel is not already made, create it
         if(channelCheck.length==0){
-            await dbo.collection("channel").insert({ name: "User Meeting at "+date,participants: [ObjectID(myDetails[0]._id)],sockets:[], link: req.body.link });
+            await dbo.collection("channel").insert({ name: req.body.username.split("@")[0]+"'s Meeting at "+date,participants: [ObjectID(myDetails[0]._id)],sockets:[], link: req.body.link });
             console.log("Successfully added new channel");
         }
         const curChannel= await dbo.collection("channel").find(query).toArray();
@@ -96,6 +96,7 @@ app.post("/createAndAddChannel", (req,res) => {
             {username: req.body.username},
             { $push: {"channels": {id : ObjectID(curChannel[0]._id),name: curChannel[0].name}}}
         )
+        console.log("updated");
         res.send();
     })
         
