@@ -77,7 +77,7 @@ const VideoFeed = () =>{
       }
     })
     socketInstance.current?.socket.on('new-chat', message => {
-      console.log(message);
+      // console.log(message);
       listenChat(message);
     })
 
@@ -88,9 +88,9 @@ const VideoFeed = () =>{
     }, []);
     useEffect(()=>{
       if(user) startCall();
-      Axios.post('http://localhost:8080/createAndAddChannel', {
+      Axios.post('https://ms-teams-backend.herokuapp.com/createAndAddChannel', {
         username: email,
-        link: window.location.href.slice(27,27+36)
+        link: window.location.pathname.split('/')[2]
       })
       .then(function (response) {
         console.log(response);

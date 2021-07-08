@@ -4,7 +4,7 @@ import './global-chat/style.scss';
 import { MessagesPanel } from './global-chat/messageContainer';
 import {useNavigate } from "react-router-dom"
 import socketClient from "socket.io-client";
-const SERVER = "http://127.0.0.1:8080";
+const SERVER = "https://ms-teams-backend.herokuapp.com";
 export class Chat extends React.Component {
 
     state = {
@@ -40,7 +40,7 @@ export class Chat extends React.Component {
         socket.on('message', message => {
             
             let allChannels = this.state.channels
-            console.log(allChannels)
+            // console.log(allChannels)
             allChannels?.forEach(c => {
                 if (c._id === message.channel_id) {
                     if (!c.messages) {
@@ -50,14 +50,14 @@ export class Chat extends React.Component {
                     }
                 }
             });
-            console.log("check")
+            // console.log("check")
             this.setState({ channels: allChannels });
         });
         this.socket = socket;
     }
 
     loadChannels = async () => {
-        fetch('http://localhost:8080/getUserChannels/'+this.props.username).then(async response => {
+        fetch('https://ms-teams-backend.herokuapp.com/getUserChannels/'+this.props.username).then(async response => {
             console.log("channels fetched!");
             this.setState({ channels: await response.json() });
         })
@@ -85,13 +85,16 @@ export class Chat extends React.Component {
     toggleCopied = () => {
         this.props.onCopied();
     }
+    showUsers = (e) => {
+        this.props.showUsers({ev: e,channels: this.channels});
+    }
 
     render() {
 
         return (
             <div className='chat-app'>
                 <ChannelList channels={this.state.channels} onSelectChannel={this.handleChannelSelect} />
-                <MessagesPanel myUserName={this.username} promptCopied={this.toggleCopied} onRedirect={this.handleRedirectToMeeting} onSendMessage={this.handleSendMessage} channel={this.state.channel} />
+                <MessagesPanel showUsers={this.showUsers} myUserName={this.username} promptCopied={this.toggleCopied} onRedirect={this.handleRedirectToMeeting} onSendMessage={this.handleSendMessage} channel={this.state.channel} />
             </div>
         );
     }

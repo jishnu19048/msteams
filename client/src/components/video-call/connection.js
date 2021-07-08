@@ -2,7 +2,6 @@ const openSocket = require('socket.io-client');
 const Peer = require('peerjs');
 let socketInstance=null;
 let peers = {};
-import Avatar from '@material-ui/core/Avatar';
 const initializePeerConnection = () => {
     var peer=new window.Peer('', {
         /// Use ICE Servers for NAT connections :)
@@ -21,7 +20,7 @@ const initializePeerConnection = () => {
     return peer;
 }
 const initializeSocketConnection = () => {
-    return openSocket.connect('http://localhost:8080/', { 
+    return openSocket.connect('https://ms-teams-backend.herokuapp.com/', { 
         
         secure: true, 
         reconnection: true, 

@@ -86,7 +86,7 @@ export default function SignUp() {
       await auth.createUserWithEmailAndPassword(email, password).then(user =>{
         console.log("signed in!");
         generateUserDocument(user, {firstName});
-        Axios.post('http://localhost:8080/createUser', {
+        Axios.post('https://ms-teams-backend.herokuapp.com/createUser', {
           username: email
         })
         .then(function (response) {

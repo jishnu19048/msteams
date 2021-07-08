@@ -99,17 +99,22 @@
                 }
             }
             .channel-name{
+                width: 80%;
                 margin: auto;
                 margin-left:  20px;
                 margin-right:20px;
                 color: rgb(68, 68, 68);
             }
+            .right{
+                float: right;
+            }
         }
-        .meesages-list {
+        .messages-list {
             list-style: none;
             align-self: stretch;
             height: 100%;
-            overflow: auto;
+            overflow-y: auto;
+            
             
             .message-item-him{
                 
@@ -158,6 +163,7 @@
                 }
             }
             
+            
         }
 
         .messages-input {
@@ -191,7 +197,8 @@
 
                 &:hover {
                     cursor: pointer;
-                    background-color: #beadfc;
+                    color: rgb(95, 83, 145);
+                    background-color: #f0f0f0;
                 }
             }
         }

@@ -161,6 +161,16 @@ io.on('connection', socket => {
     });
     socket.on('send-message', message => {
         console.log(message);
+        MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, async function(err, db) {
+            if (err) throw err;
+            var dbo = db.db("ms_teams");
+            var query = { _id: ObjectID(message.channel_id) };
+            await dbo.collection("channel").updateOne(
+                query,
+                { $push: {"messages": message}}
+            )
+            console.log("saved");
+        });
         io.emit('message', message);
     });
     socket.on('disconnect', () => {

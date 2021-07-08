@@ -43,7 +43,6 @@ import { useSizedIconButtonStyles } from '@mui-treasury/styles/iconButton/sized'
 import { useDynamicAvatarStyles } from '@mui-treasury/styles/avatar/dynamic';
 import MuiAlert from '@material-ui/lab/Alert';
 import {Chat} from './chat-room';
-const SERVER = "http://127.0.0.1:8080";
 
 const drawerWidth = 100;
 function Alert(props) {
@@ -167,9 +166,12 @@ function ResponsiveDrawer(props) {
   const navigate =useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const [prompt, setPrompt] = useState(false);
+  const [channelUsers, setChannelUsers]= useState(null);
   const avatarStyles = useDynamicAvatarStyles({ radius: 12, size: 48 }); 
+  const avatarStyles1 = useDynamicAvatarStyles({ radius: 50, size: 40 }); 
   const vertical='top';
   const horizontal='center';
+  let channels=[];
 
   useEffect(() => {
     generateUserDocument(currentUser).then(res=>{
@@ -192,9 +194,9 @@ function ResponsiveDrawer(props) {
   };
   const handleStartMeet = () => {
     setLoading(true);
-        Axios.get(`http://localhost:8080/`).then(res => {
+        Axios.get(`https://ms-teams-backend.herokuapp.com/`).then(res => {
           setLoading(false);
-          navigate(`/join/${res.data.link}?name=${meetingName}`);
+          navigate(`/join/${res.data.link}`);
         })
   };
   const handleLogOut = () => {
@@ -216,6 +218,13 @@ function ResponsiveDrawer(props) {
     }
 
     setPrompt(false);
+  };
+  const showUsers = (val) => {
+    setChannelUsers(val.ev.currentTarget);
+    channels=val.channels;
+  };
+  const hideUsers = () => {
+    setChannelUsers(null);
   };
   const drawer = (
     <div>
@@ -361,7 +370,30 @@ function ResponsiveDrawer(props) {
         </nav>
         <main className={classes.content}>
           <div className={classes.toolbar} /> 
-          <Chat username={email} onCopied={showCopiedPrompt} joinMeeting={handleJoinMeeting}/> 
+          <Chat username={email} showUsers={showUsers} onCopied={showCopiedPrompt} joinMeeting={handleJoinMeeting}/> 
+          <Menu
+              className={classes.toolbarButtons}
+              id="user-list"
+              anchorEl={channelUsers}
+              keepMounted
+              open={Boolean(channelUsers)}
+              onClose={hideUsers}
+            >
+              {channels.map(c => 
+                <MenuItem >
+                  <Row p={0.5} gap={0.5} borderRadius={5}>
+                    <Item>
+                      <Avatar
+                        classes={avatarStyles1}
+                      />
+                    </Item>
+                    <Info position={'middle'} useStyles={useTutorInfoStyles}>
+                      <InfoSubtitle>{c._id}</InfoSubtitle>
+                    </Info>
+                  </Row>
+                </MenuItem>
+              )};
+            </Menu>
         </main>
         <Snackbar  anchorOrigin={{ vertical, horizontal }} open={prompt} autoHideDuration={6000} onClose={closePrompt}>
           <Alert onClose={closePrompt} severity="info">
