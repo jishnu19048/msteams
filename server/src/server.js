@@ -60,7 +60,10 @@ app.get("/getUserChannels/:username", (req, res) => {
             allUserChannels.push(channelDetails[0]);
         }
         res.send(allUserChannels);
+        db.close();
     });
+    
+
 });
 //API to create user and join to default channel
 app.post("/createUser", (req,res) =>{
@@ -78,6 +81,7 @@ app.post("/createUser", (req,res) =>{
         console.log("user added to enagage channel");
         //successfully user created
         res.send();
+        db.close();
     })
 })
 //API to create channel and join channel
@@ -116,6 +120,7 @@ app.post("/createAndAddChannel", (req,res) => {
         )
         console.log("updated");
         res.send();
+        db.close();
     })
         
 })
@@ -170,6 +175,7 @@ io.on('connection', socket => {
                 { $push: {"messages": message}}
             )
             console.log("saved");
+            db.close();
         });
         io.emit('message', message);
     });

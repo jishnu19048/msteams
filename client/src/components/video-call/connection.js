@@ -115,6 +115,7 @@ class Connection {
             const roomContainer = document.getElementById('video-grid');
             const videoContainer = document.createElement('div');
             const video = document.createElement('video');
+            video.classList.add('display-media');
             video.srcObject = this.videoContainer[createObj.id].stream;
             video.id = createObj.id;
             video.autoplay = true;
@@ -146,15 +147,22 @@ class Connection {
         }
     }
     reInitializeStream = (video, audio, type='userMedia') => {
+        console.log(type);
         const media = type === 'userMedia' ? this.getVideoAudioStream(video, audio) : navigator.mediaDevices.getDisplayMedia();
         return new Promise((resolve) => {
             media.then((stream) => {
                 const myVideo = this.getMyVideo();
                 if (type === 'displayMedia') {
-                    this.toggleVideoTrack({audio, video});
+                    myVideo.classList.remove('display-media');
+                    this.toggleVideoTrack(video, audio);
                     this.listenToEndStream(stream, {video, audio});
                     this.socket.emit('display-media', true);
                 }
+                if (myVideo) myVideo.srcObject?.getVideoTracks().forEach((track) => {
+                    if (track.kind === 'video') {
+                        track.stop();
+                    }
+                });
                 checkAndAddClass(myVideo, type);
                 this.createVideo({ id: this.myID, stream });
                 replaceStream(stream);
@@ -167,9 +175,11 @@ class Connection {
         if (videoTrack[0]) {
             videoTrack[0].onended = () => {
                 this.socket.emit('display-media', false);
-                this.reInitializeStream(status.video, status.audio, 'userMedia');
-                this.settings.updateInstance('displayStream', false);
-                this.toggleVideoTrack(status);
+                this.reInitializeStream(!status.video, status.audio, 'userMedia').then(() => {
+                    console.log("off");
+                    this.settings.updateInstance('displayStream', false);
+                });
+                // this.settings.updateInstance('displayStream', false);
             }
         }
     };
@@ -282,11 +292,10 @@ const replaceStream = (mediaStream) => {
         });
     })
 }
-const checkAndAddClass = (video, type='userMedia') => {
-    if (video?.classList?.length === 0 && type === 'displayMedia')  
+const checkAndAddClass = (video, type) => {
+    if (video?.classList?.length === 0 && type === 'userMedia'){
         video.classList.add('display-media');
-    else 
-        video.classList.remove('display-media');
+    }
 }
 
 export function createSocketConnectionInstance(settings={}) {

@@ -150,11 +150,19 @@ const VideoFeed = () =>{
     }
     const toggleScreenShare = () => {
         const { reInitializeStream, toggleVideoTrack } = socketInstance.current;
-        displayStream && toggleVideoTrack({video: false, audio: true});
-        reInitializeStream(false, true, !displayStream ? 'displayMedia' : 'userMedia').then(() => {
-            setDisplayStream(!displayStream);
-            setCamStatus(false);
-        });
+        if(displayStream){
+          reInitializeStream(true, micStatus, 'userMedia').then(() => {
+              console.log(displayStream);
+              setDisplayStream(!displayStream);
+              setCamStatus(!camStatus);
+          });
+        }else{
+          reInitializeStream(false, micStatus, !displayStream ? 'displayMedia' : 'userMedia').then(() => {
+              console.log(displayStream);
+              setDisplayStream(!displayStream);
+              setCamStatus(!camStatus);
+          });
+        }
     }
     const chatHandle = (bool) => {
         setChatToggle(bool);

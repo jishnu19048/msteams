@@ -41,8 +41,13 @@ export class Chat extends React.Component {
             
             let allChannels = this.state.channels
             // console.log(allChannels)
+            let notifyChannel;
             allChannels?.forEach(c => {
                 if (c._id === message.channel_id) {
+                    // console.log(this.state.channel);
+                    if(message.senderName!=this.username && (!this.state.channel || this.state.channel._id!=message.channel_id) ){
+                        notifyChannel=c;
+                    }
                     if (!c.messages) {
                         c.messages = [message];
                     } else {
@@ -52,6 +57,9 @@ export class Chat extends React.Component {
             });
             // console.log("check")
             this.setState({ channels: allChannels });
+            if(notifyChannel!=null){
+                this.showToast(notifyChannel);
+            }
         });
         this.socket = socket;
     }
@@ -85,8 +93,8 @@ export class Chat extends React.Component {
     toggleCopied = () => {
         this.props.onCopied();
     }
-    showUsers = (e) => {
-        this.props.showUsers({ev: e,channels: this.channels});
+    showToast = (c) => {
+        this.props.showToast(c);
     }
 
     render() {

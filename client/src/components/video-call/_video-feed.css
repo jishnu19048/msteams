@@ -41,9 +41,12 @@ video {
   margin: 0.5rem;
   width: 400px;
   object-fit: cover;
+}
+.display-media {
+  height: 300px;
   transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg);
-  -moz-transform: rotateY(180deg);
+  -moz-transform: rotateY(180deg);  
 }
 .loadingDiv{
   position: "fixed";

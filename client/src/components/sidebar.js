@@ -43,6 +43,9 @@ import { useSizedIconButtonStyles } from '@mui-treasury/styles/iconButton/sized'
 import { useDynamicAvatarStyles } from '@mui-treasury/styles/avatar/dynamic';
 import MuiAlert from '@material-ui/lab/Alert';
 import {Chat} from './chat-room';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { css } from "glamor";
 
 const drawerWidth = 100;
 function Alert(props) {
@@ -226,6 +229,15 @@ function ResponsiveDrawer(props) {
   const hideUsers = () => {
     setChannelUsers(null);
   };
+  const notify = (c) => toast.dark("New message in "+c.name+" channel.",{
+    position: "bottom-right",
+    autoClose: 3000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+  });
   const drawer = (
     <div>
       <div className={classes.toolbar} />
@@ -240,6 +252,18 @@ function ResponsiveDrawer(props) {
           <Fab className={classes.options}  aria-label="edit">
             <ChatIcon />
           </Fab>
+          <ToastContainer 
+            toastStyle={{ backgroundColor: "#5c6bc0" }}
+            position="bottom-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+          />
       </ListItemIcon>
       </List>
       <Dialog  open={open} onClose={handleMeeting} aria-labelledby="form-dialog-title">
@@ -370,7 +394,7 @@ function ResponsiveDrawer(props) {
         </nav>
         <main className={classes.content}>
           <div className={classes.toolbar} /> 
-          <Chat username={email} showUsers={showUsers} onCopied={showCopiedPrompt} joinMeeting={handleJoinMeeting}/> 
+          <Chat username={email} showToast={notify} onCopied={showCopiedPrompt} joinMeeting={handleJoinMeeting}/> 
           <Menu
               className={classes.toolbarButtons}
               id="user-list"
