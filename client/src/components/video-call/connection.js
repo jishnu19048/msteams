@@ -30,7 +30,7 @@ const initializeSocketConnection = () => {
 }
 class Connection {
     videoContainer = {};
-    message = [];
+    message;
     streaming = false;
     myPeer;
     socket;
@@ -50,6 +50,25 @@ class Connection {
     initializeSocketEvents = () => {
         this.socket.on('connect', () => {
             console.log('socket connected');
+        });
+        this.socket.on('new-chat', message => {
+            console.log(message);
+            const newItem = {id: Date.now(),modifier:"him",text:message.message, user:message.displayName}
+            this.message=newItem;
+            this.settings.updateInstance('messageItemsNew', this.message);
+            // const messageItem = document.createElement('li');
+            // messageItem.classList.add(message.modifier);
+            // messageItem.innerHTML=`<div><i>`+message.user+` , `+new Date(new Date().getTime()).toLocaleTimeString()+`</i></div>
+            // <span>`+message.text+`</span>`
+            // chatList.appendChild(messageItem);
+        });
+        this.socket.on('check-user-video-toggle', value => {
+            console.log(value.userDatauserID +"video status"+ value.value);
+            if(value.value){
+                this.switchVideoOff(value.userData);
+            }else{
+                this.switchVideoOn(value.userData);
+            }
         });
         this.socket.on('disconnected', (userID) => {
             console.log('user disconnected-- closing peers', userID);

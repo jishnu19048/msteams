@@ -26,6 +26,9 @@ import ScreenShareIcon from '@material-ui/icons/ScreenShare';
 import StopScreenShareIcon from '@material-ui/icons/StopScreenShare';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import IconButton from '@material-ui/core/IconButton';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import FeedbackIcon from '@material-ui/icons/Feedback';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -62,30 +65,19 @@ const VideoFeed = () =>{
     const [chatOpen, setChatOpen] = React.useState(true);
     const navigate =useNavigate();
     const [messageItems, setMessageItems] = React.useState([]);
+    const [messageItemsNew, setMessageItemsNew] = React.useState(null);
     const [displayStream, setDisplayStream] = useState(false);
     const [streaming, setStreaming] = useState(false);
     const [chatToggle, setChatToggle] = useState(false);
     const [loading, setLoading] = useState(true);
-    
-    socketInstance.current?.socket.on('check-user-video-toggle', value => {
-      console.log(value.userDatauserID +"video status"+ value.value);
-
-      if(value.value){
-        socketInstance.current?.switchVideoOff(value.userData);
-      }else{
-        socketInstance.current?.switchVideoOn(value.userData);
+  
+    useEffect(() =>{
+      if(messageItemsNew) {
+        setMessageItems(messageItems.concat(messageItemsNew));
+        if(!chatToggle) notify();
       }
-    })
-    socketInstance.current?.socket.on('new-chat', message => {
-      // console.log(message);
-      listenChat(message);
-    })
+    },[messageItemsNew])
 
-    // useEffect(() => {
-    //     return () => {
-    //         socketInstance.current?.endConnection();
-    //     }
-    // }, []);
     useEffect(()=>{
       if(user) startCall();
       Axios.post('https://ms-teams-backend.herokuapp.com/createAndAddChannel', {
@@ -115,7 +107,7 @@ const VideoFeed = () =>{
     }
     const updateFromInstance = (key, value) => {
         if (key === 'streaming') setStreaming(value);
-        if (key === 'message') setMessages([...value]);
+        if (key === 'messageItemsNew') setMessageItemsNew(value);
         if (key === 'displayStream') setDisplayStream(value);
         if (key === 'camStatus') setCamStatus(value);
     }
@@ -168,9 +160,30 @@ const VideoFeed = () =>{
     const chatHandle = (bool) => {
         setChatToggle(bool);
     }
+    const notify = () => toast.dark("You have new messages.",{
+      position: "top-left",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
     const link=window.location.href;
     return (
         <div> 
+          <ToastContainer 
+            toastStyle={{ backgroundColor: "#5c6bc0" }}
+            position="top-left"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+          />
           <div className="header">
             <div className="logo">
               <AvatarGroup id="userList" max={1}>
@@ -181,7 +194,7 @@ const VideoFeed = () =>{
               {/* <h3>{meetingName}</h3> */}
             </div>
           </div> 
-          <div className="main">  
+          <div className="main"> 
             <div className="main__left">
               <div className="videos__group">
                 <div id="video-grid">
@@ -222,7 +235,9 @@ const VideoFeed = () =>{
                         <PersonAddIcon style={{fill: "white"}}/>
                     </IconButton>
                     <IconButton className={classes.options__button}  onClick={() => chatHandle(!chatToggle)}>
+              
                         <ChatIcon style={{fill: "white"}}/>
+                        
                     </IconButton>
                 </div>
                 <Dialog  open={openx} onClose={handleStartMeet} aria-labelledby="form-dialog-title">
@@ -272,7 +287,7 @@ const VideoFeed = () =>{
                 </div>
                 <div className="chat-drawer-list">
                     <div className="messages">
-                      <ul ref={chatRef}>
+                      <ul  ref={chatRef}>
                         {messageItems.map(messageItems => (
                           <li key={messageItems.id} className={messageItems.modifier}>
                             <div><i>{messageItems.user} , {new Date(new Date().getTime()).toLocaleTimeString()}</i></div>

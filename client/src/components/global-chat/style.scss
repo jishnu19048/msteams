@@ -22,7 +22,7 @@
 
     .channel-list {
         width: calc(35% - 12px);
-        min-width: 135px;
+        min-width: 160-px;
         border: 1px solid rgb(224, 224, 224);
         margin: 10px;
         margin-right: 0;
@@ -31,37 +31,39 @@
         background-color: rgb(243, 239, 239);
         overflow: auto;
         overflow-x: hidden;
+        .row {
+            display: flex;
+            width:100% !important;
+            border-bottom: 1px solid rgb(224, 224, 224);
+            padding: 10px;
+            .chat-icon{
+                margin: 10px 10px;
+                color:rgb(95, 83, 145);
+                float: left;
+            }
+            .channel-item {
+                padding: 10px;
+                width: 100%;
+                div {
+                    font-weight: bold;
+                }
+        
+                span {
+                    font-size: 10px;
+                    color:rgb(97, 96, 96);
+                }
+            }
+            &:hover {
+                background-color: rgb(199, 194, 219);
+                cursor: pointer;
+            }
+        }
         .loadingDiv{
             position: "fixed";
             top: "50%";
             left: "50%";
             padding-top:30px;
             transform: "translate(-50%, -50%)"
-        }
-    }
-    .row {
-        display: flex;
-        border-bottom: 1px solid rgb(224, 224, 224);
-        padding: 10px;
-        .chat-icon{
-            margin: 10px 10px;
-            color:rgb(95, 83, 145);
-            float: left;
-        }
-        .channel-item {
-            padding: 10px;
-            div {
-                font-weight: bold;
-            }
-    
-            span {
-                font-size: 10px;
-                color:rgb(97, 96, 96);
-            }
-        }
-        &:hover {
-            background-color: rgb(199, 194, 219);
-            cursor: pointer;
         }
     }
 
