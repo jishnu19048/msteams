@@ -178,6 +178,7 @@ class Connection {
                 this.reInitializeStream(!status.video, status.audio, 'userMedia').then(() => {
                     console.log("off");
                     this.settings.updateInstance('displayStream', false);
+                    this.settings.updateInstance('camStatus', true);
                 });
                 // this.settings.updateInstance('displayStream', false);
             }
@@ -269,14 +270,23 @@ class Connection {
             return;
         }
         const myMediaTracks = this.videoContainer[this.myID].stream.getTracks();
-        myMediaTracks.forEach((t) => {
+        for (const t of myMediaTracks) {
+            console.log("hi");
             t.stop();
-        })
+        }
+        const myVideo = this.getMyVideo();
+        if (myVideo){
+            const allTracks = myVideo.srcObject?.getTracks();
+            for (const t of allTracks) {
+                t.stop();
+            }
+        }
         socketInstance.socket.disconnect();
         this.myPeer.destroy();
     }
 }
 const replaceStream = (mediaStream) => {
+    //for replacing each track that is being sent on the connection :)
     Object.values(peers).map((peer) => {
         peer.peerConnection?.getSenders().map((sender) => {
             if(sender.track.kind == "audio") {

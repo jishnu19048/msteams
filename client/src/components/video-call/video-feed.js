@@ -81,11 +81,11 @@ const VideoFeed = () =>{
       listenChat(message);
     })
 
-    useEffect(() => {
-        return () => {
-            socketInstance.current?.endConnection();
-        }
-    }, []);
+    // useEffect(() => {
+    //     return () => {
+    //         socketInstance.current?.endConnection();
+    //     }
+    // }, []);
     useEffect(()=>{
       if(user) startCall();
       Axios.post('https://ms-teams-backend.herokuapp.com/createAndAddChannel', {
@@ -117,6 +117,7 @@ const VideoFeed = () =>{
         if (key === 'streaming') setStreaming(value);
         if (key === 'message') setMessages([...value]);
         if (key === 'displayStream') setDisplayStream(value);
+        if (key === 'camStatus') setCamStatus(value);
     }
     const sendChat=()=>{
       // console.log(Date.now());
