@@ -83,7 +83,7 @@ const VideoFeed = () =>{
       })
       .then(function (response) {
         console.log(response.data.messages)
-        response.data.messages.forEach(m=>{
+        response.data.messages?.forEach(m=>{
           if(m.senderName === email){
             m.modifier="me";
           }else{
@@ -91,7 +91,8 @@ const VideoFeed = () =>{
           }
           m.user=m.senderName;
         })
-        setMessageItems(response.data.messages);
+        if(response.data.messages)
+          setMessageItems(response.data.messages);
         setLoading(false);
       })
       .catch(function (error) {
