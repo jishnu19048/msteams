@@ -1,4 +1,4 @@
-
+@import url('https://fonts.googleapis.com/css?family=Red+Hat+Display:900&display=swap');
 .chat-app {
     width: 80%;
     height: 100%;
@@ -6,18 +6,12 @@
     margin-left: 10%;
     justify-content: center;
 
-    .no-content-message {
-        color: #b8b6b6;
-        font-style: italic;
-        font-size: 16px;
-        text-align: center;
-        margin: 20px;
-    }
     .time-message {
         color: #b8b6b6;
         font-size: 15px;
         text-align: center;
         margin: 20px;
+        
     }
 
     .channel-list {
@@ -80,6 +74,62 @@
         -webkit-box-shadow: 0 0px 6px 0px rgb(170, 170, 170);
         -moz-box-shadow: 0 0px 6px 0px rgb(170, 170, 170);
         box-shadow: 0 0px 6px 0px rgb(170, 170, 170);
+        .no-content-message {
+            color: #b8b6b6;
+            
+            font-size: 16px;
+            text-align: center;
+            // padding: 100px 0px;
+            padding: 80px 0px;
+            float: left;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            h5 {
+                color: mix(#fff, #000000, 75%);
+                font-size: 40px; 
+                margin: 0 40px; 
+                font-weight: 600;
+                text-shadow: 
+                    -0.0075em 0.0075em 0 mix(#fff, #000000, 84%),
+                    0.005em 0.005em 0 mix(#fff, #000000, 50%),
+                    0.01em 0.01em 0 mix(#fff, #000000, 52%), 
+                    0.015em 0.015em mix(#fff, #000000, 54%), 
+                    0.02em 0.02em 0 mix(#fff, #000000, 56%), 
+                    0.025em 0.025em 0 mix(#fff, #000000, 58%),
+                    0.03em 0.03em 0 mix(#fff, #000000, 60%),
+                    0.035em 0.035em 0 mix(#fff, #000000, 62%);
+            }
+            h1 {
+                font-size: 3vw;
+                max-width: 50vw;
+                color: #999999;
+                margin: 0px 50px;
+                span {
+                  background-image: linear-gradient(
+                    transparent calc(65% - 5px),
+                    darken(#eaf0ff, 1%) 5px,
+                  );
+                  background-size: 0;
+                  background-repeat: no-repeat;
+                  display: inline;
+                  transition: 0.5s ease;
+                }
+                
+                &:hover {
+                  span {
+                    background-size: 100%;
+                  }
+                }
+              }
+            .no-content-message-image{
+                
+                object-fit: contain;
+                width: 65%;
+                height: 60%;
+
+            }
+        }
         .messages-header {
             width: 100%;
             height: 80px;

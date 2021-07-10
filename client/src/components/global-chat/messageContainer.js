@@ -6,6 +6,7 @@ import VideocamIcon from '@material-ui/icons/Videocam';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import PeopleIcon from '@material-ui/icons/People';
 import copy from "copy-to-clipboard"; 
+import messageTemp from './message-cover.png';
 import './style.scss';
 
 export class MessagesPanel extends React.Component {
@@ -44,7 +45,11 @@ export class MessagesPanel extends React.Component {
     }
     render() {
 
-        let list = <div className="no-content-message">Select a channel to talk into or start a new meeting.</div>;
+        let list = <div className="no-content-message">
+            <h1><span>Hop into a channel, or start a new meeting.</span></h1>
+            <img className="no-content-message-image" src={messageTemp}>
+            </img>
+        </div>;
         if (this.props.channel) {
             list = <div className="time-message">{new Date().toLocaleString()}</div>;
         }

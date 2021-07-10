@@ -119,7 +119,7 @@ app.post("/createAndAddChannel", (req,res) => {
             { $push: {"channels": {id : ObjectID(curChannel[0]._id),name: curChannel[0].name}}}
         )
         console.log("updated");
-        res.send();
+        res.send(curChannel[0]);
         db.close();
     })
         
@@ -138,6 +138,18 @@ io.on('connection', socket => {
         });
         socket.on('chat', (data) => {
             console.log(data);
+            MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, async function(err, db) {
+                if (err) throw err;
+                var dbo = db.db("ms_teams");
+                var query = { link: data.link };
+                const curChannel= await dbo.collection("channel").find(query).toArray();
+                await dbo.collection("channel").updateOne(
+                    query,
+                    { $push: {"messages": {channel_id:curChannel[0]._id , text:data.message, senderName:data.email , id:Date.now()}}}
+                )
+                console.log("saved");
+                db.close();
+            });
             socket.to(roomID).emit('new-chat', {...data, userData});
         });
         socket.on('user-video-toggle', (value) => {

@@ -12,7 +12,6 @@ import MicOffIcon from '@material-ui/icons/MicOff';
 import MicIcon from '@material-ui/icons/Mic';
 import CallEndIcon from '@material-ui/icons/CallEnd';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import Fab from '@material-ui/core/Fab';
 import { makeStyles } from '@material-ui/core/styles';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions  } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
@@ -20,7 +19,6 @@ import { useNavigate } from "react-router-dom";
 import { createSocketConnectionInstance } from './connection';
 import { useAuth } from "../../middleware/UserProvider";
 import { generateUserDocument } from "../../firebase";
-import Avatar from '@material-ui/core/Avatar';
 import AvatarGroup from '@material-ui/lab/AvatarGroup';
 import ScreenShareIcon from '@material-ui/icons/ScreenShare';
 import StopScreenShareIcon from '@material-ui/icons/StopScreenShare';
@@ -28,7 +26,6 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import IconButton from '@material-ui/core/IconButton';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import FeedbackIcon from '@material-ui/icons/Feedback';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -85,7 +82,16 @@ const VideoFeed = () =>{
         link: window.location.pathname.split('/')[2]
       })
       .then(function (response) {
-        console.log(response);
+        console.log(response.data.messages)
+        response.data.messages.forEach(m=>{
+          if(m.senderName === email){
+            m.modifier="me";
+          }else{
+            m.modifier="him";
+          }
+          m.user=m.senderName;
+        })
+        setMessageItems(response.data.messages);
         setLoading(false);
       })
       .catch(function (error) {
@@ -102,7 +108,7 @@ const VideoFeed = () =>{
         setDisplayName(res.Name);
         socketInstance.current=createSocketConnectionInstance({
           updateInstance: updateFromInstance,
-          username: res.Name});
+          username: email});
       });
     }
     const updateFromInstance = (key, value) => {
@@ -113,9 +119,9 @@ const VideoFeed = () =>{
     }
     const sendChat=()=>{
       // console.log(Date.now());
-      const newItem = {id: Date.now(),modifier:"me",text:message, user:'me'}
+      const newItem = {id: Date.now(),modifier:"me",text:message, user:email}
       setMessageItems(messageItems.concat(newItem));
-      socketInstance.current.sendMessage({message,displayName});
+      socketInstance.current.sendMessage({message,email, link: window.location.pathname.split('/')[2]});
       setMessage('');
       // console.log({message});
     }

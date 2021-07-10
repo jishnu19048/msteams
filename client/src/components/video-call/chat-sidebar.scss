@@ -4,7 +4,7 @@ $chatBoxColor: #161d29;
 .chat-drawer {
     font-family: sans-serif;
     .MuiPaper-root.MuiDrawer-paper.MuiDrawer-paperAnchorRight.MuiPaper-elevation16 {
-        width: 300px;
+        width: 350px;
         background-color: $chatBoxColor;
     }
     @media screen and (max-width: 600px) {
