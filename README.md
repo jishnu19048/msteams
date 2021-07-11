@@ -1,6 +1,6 @@
 # Microsoft Teams Clone
 
-This is a text, audio & video chatting web-applicaiton running on node js.
+This is a text, audio & video chatting web-applicaiton running on node js.  
 Live web-app: https://ms-teams-engage.netlify.app/
 
 
