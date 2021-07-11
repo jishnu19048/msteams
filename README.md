@@ -21,11 +21,16 @@ Live web-app: https://ms-teams-engage.netlify.app/
 
 
 ## Overview
-The peer to peer communication is handled using the peerJS library for javascript and the connection to any room is managed by sockets using the sockets.IO library. Each peer that is on the current socket network had a collection of peers it is connected to. The socket connection allows the peers on this network to communicate among themselves by sending signals with data. The cloud peerJS servers are used to initialize every peer on the network. 
 
-WebRTC is used to access the media devices and capture the media stream. For display streams like screensharing, etc. webrtc's ``navigator.mediaDevices.getDisplayMedia()`` allows users to capture their screen contents in a similar way. It allows us to access all the tracks of any media-stream(video or audio) which in turn allows us to enable or disable them accordingly and properly end streams on closing peer connections. A stream is sent over all the peer to peer connections present in the socket connection.
+The peer to peer communication is handled using the peerJS library for javascript and the connection to any room is managed by sockets using the sockets.IO library. Each peer that is on the current socket network had a collection of peers it is connected to. The socket connection allows the peers on this network to communicate among themselves by sending signals with data. The cloud peerJS servers are used to initialize every peer on the network. By default, peerJS is configured to connect to Google's **STUN** server, but for **TURN** servers, we have to manually configure the details while the peer is created.
 
+WebRTC is used to access the media devices and capture the media stream using ``navigator.mediaDevices.getUserMedia()`` . For display streams like screensharing, etc. webrtc's ``navigator.mediaDevices.getDisplayMedia()`` allows users to capture their screen contents in a similar way. It allows us to access all the tracks of any media-stream(video or audio) which in turn allows us to enable or disable them accordingly and properly end streams on closing peer connections. A stream is sent over all the peer to peer connections present in the socket connection.  
 Hence, visual, audio & textual communication is altogether implemented using peerJS, socketIO & webRTC.
+
+The backend server is an express app with APIs to create users & channels, add user to channels, fetching user channels and generate user unique room-ids for channels. React was used to develop a simple, well-structured & responsive UI, while keeping an agile mindset.  
+
+User-related details and channel detail are stored using MongoDB. A document based model was chosen as it allows json based query values and response values which makes querying for complex objects easier, hence aiding to rendering at the frontend.  
+User authentication is added to the application using firebase along with React's Context to pass down user details to every child UI component.
 
 
 ## Development
