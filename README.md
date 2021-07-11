@@ -13,8 +13,8 @@ This is a text, audio & video chatting web-applicaiton running on node js.
 ## Features
 
 - Video & Audio meeting with real-time text chatting.
-- Supports muting/unmuting audio, turning off/on camera & screen-sharing for seamless meeting.
-- Text channels for every meeting you have, so that you can always continue your conversation.
+- Supports muting/unmuting audio, turning off/on camera & screen-sharing for seamless communication.
+- Text channels for every meeting you have, so that you can always continue your conversations.
 - Notifications so that you dont miss anything.
 - Easy invitations using auto generated links.
 
