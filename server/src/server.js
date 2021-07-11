@@ -9,20 +9,7 @@ var cors = require('cors');
 app.use(cors());
 const server = require("http").Server(app);
 const { v4: uuidv4 } = require('uuid');
-var STATIC_CHANNELS = [{
-    name: 'Microsoft Engage 2021',
-    participants: 0,
-    id: 1,
-    sockets: [],
-    link: "6bc2fe22-a9b2-46b8-baab-961fb293549d"
-}, {
-    name: 'Test Channel',
-    participants: 0,
-    id: 2,
-    sockets: [],
-    link: "fe7acefb-b805-4ff2-808c-c3288f5af0a0"
-}];
-//enabling cors for socket connection
+//enabling cors for our socket connection
 const io = require("socket.io")(server, {
     cors:{
         origins: ["*"],
@@ -40,12 +27,14 @@ const port = process.env.PORT || 8080;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-//function to fetch all channels realated to the user
 
+//API request to generate an unique roomID for every meeting
 app.get("/", (req, res) => {
     const meetID = uuidv4();
     res.send({ link: meetID });
 });
+
+//API request to fetch all channels realated to the user
 app.get("/getUserChannels/:username", (req, res) => {
     MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, async function(err, db) {
         if (err) throw err;
@@ -124,11 +113,12 @@ app.post("/createAndAddChannel", (req,res) => {
     })
         
 })
-//listener for our socket
+//listener for our socket connection
 io.on('connection', socket => {
     console.log('socket established')
     socket.emit('connection', null);
     socket.on('join-room', (userData) => {
+        //this executes only for a peer who has connected to the video call room
         const { roomID, userID, username } = userData;
         console.log(userData);
         socket.join(roomID);
@@ -156,26 +146,12 @@ io.on('connection', socket => {
             socket.to(roomID).emit('check-user-video-toggle', {userData, value });
         });
     });
+    // joining the text channel
     socket.on('channel-join', (id) => {
         console.log('channel join', id);
-        STATIC_CHANNELS.forEach(c => {
-            if (c.id === id) {
-                if (c.sockets.indexOf(socket.id) == (-1)) {
-                    c.sockets.push(socket.id);
-                    c.participants++;
-                    io.emit('channel', c);
-                }
-            } else {
-                let index = c.sockets.indexOf(socket.id);
-                if (index != (-1)) {
-                    c.sockets.splice(index, 1);
-                    c.participants--;
-                    io.emit('channel', c);
-                }
-            }
-        });
         return id;
     });
+    //chatting over the text channel
     socket.on('send-message', message => {
         console.log(message);
         MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, async function(err, db) {
@@ -191,15 +167,8 @@ io.on('connection', socket => {
         });
         io.emit('message', message);
     });
+    //disconnecting from the socket connection
     socket.on('disconnect', () => {
-        STATIC_CHANNELS.forEach(c => {
-            let index = c.sockets.indexOf(socket.id);
-            if (index != (-1)) {
-                c.sockets.splice(index, 1);
-                c.participants--;
-                io.emit('channel', c);
-            }
-        });
     });
 });
 

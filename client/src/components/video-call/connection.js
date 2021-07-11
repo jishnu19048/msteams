@@ -4,18 +4,18 @@ let socketInstance=null;
 let peers = {};
 const initializePeerConnection = () => {
     var peer=new window.Peer('', {
-        /// Use ICE Servers for NAT connections :)
+        // / Use ICE Servers for NAT connections :)
         // Just uncomment this
-        // config: {
-        //     'iceServers': [
-        //         { url: 'stun:stun1.l.google.com:19302' },
-        //         {
-        //             url: 'turn:numb.viagenie.ca',
-        //             credential: 'muazkh',
-        //             username: 'webrtc@live.com'
-        //         }
-        //     ]
-        // }
+        config: {
+            'iceServers': [
+                { url: 'stun:stun1.l.google.com:19302' },
+                {
+                    url: 'turn:numb.viagenie.ca',
+                    credential: 'muazkh',
+                    username: 'webrtc@live.com'
+                }
+            ]
+        }
     });
     return peer;
 }
@@ -25,7 +25,7 @@ const initializeSocketConnection = () => {
         secure: true, 
         reconnection: true, 
         rejectUnauthorized: false,
-        reconnectionAttempts: 1
+        reconnectionAttempts: 3
     });
 }
 class Connection {
