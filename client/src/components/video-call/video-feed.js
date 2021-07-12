@@ -74,6 +74,12 @@ const VideoFeed = () =>{
         if(!chatToggle) notify();
       }
     },[messageItemsNew])
+    // useEffect(() =>{
+    //   if(chatToggle) {
+    //     const objDiv = document.getElementById('allMessages');
+    //     objDiv.scrollTop = objDiv.scrollHeight;
+    //   }
+    // },[chatToggle])
 
     useEffect(()=>{
       if(user) startCall();
@@ -154,9 +160,13 @@ const VideoFeed = () =>{
           reInitializeStream(true, micStatus, 'userMedia').then(() => {
               console.log(displayStream);
               setDisplayStream(!displayStream);
-              setCamStatus(!camStatus);
+              setCamStatus(true);
+              socketInstance.current?.socket.emit('display-media', false);
           });
         }else{
+          if(!camStatus) {
+            handleCam();
+          }
           reInitializeStream(false, micStatus, !displayStream ? 'displayMedia' : 'userMedia').then(() => {
               console.log(displayStream);
               setDisplayStream(!displayStream);
@@ -209,14 +219,14 @@ const VideoFeed = () =>{
               </div>
               <div className="options">
                 <div className="options__left">
-                    <IconButton className={classes.options__button} onClick={handleCam}>
+                    <IconButton disabled={displayStream} className={classes.options__button} onClick={handleCam}>
                         {camStatus &&
                           <VideocamOffIcon style={{fill: "white"}}/>
                         }
                         {!camStatus && <VideocamIcon style={{fill: "white"}}/>
                         }
                     </IconButton>
-                    <IconButton className={classes.options__button} onClick={handleMyMic}>
+                    <IconButton disabled={displayStream} className={classes.options__button} onClick={handleMyMic}>
                         {micStatus &&
                           <MicOffIcon style={{fill: "white"}}/>
                         }
@@ -294,7 +304,7 @@ const VideoFeed = () =>{
                 </div>
                 <div className="chat-drawer-list">
                     <div className="messages">
-                      <ul  ref={chatRef}>
+                      <ul  id="allMessages" ref={chatRef}>
                         {messageItems.map(messageItems => (
                           <li key={messageItems.id} className={messageItems.modifier}>
                             <div><i>{messageItems.user} , {new Date(new Date().getTime()).toLocaleTimeString()}</i></div>

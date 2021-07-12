@@ -112,7 +112,29 @@ app.post("/createAndAddChannel", (req,res) => {
         db.close();
     })
         
-})
+});
+//api to leave a particular channel
+app.post("/leaveChannel", (req,res) => {
+    MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, async function(err, db) {
+        if (err) throw err;
+        var dbo = db.db("ms_teams");
+        const myDetails=await dbo.collection("user_channels").find({username: req.body.username}).toArray();
+        await dbo.collection("user_channels").updateOne(
+            {username: req.body.username},
+            { $pull: {"channels": {id : ObjectID(req.body.link)}}}
+        )
+        console.log("channel removed from user list");
+        
+        await dbo.collection("channel").updateOne(
+            {_id: ObjectID(req.body.link)},
+            { $pull: {"participants": ObjectID(myDetails[0]._id)}}
+        )
+        console.log("user removed from channel");
+        //successfully user created
+        res.send();
+        db.close();
+    })
+});
 //listener for our socket connection
 io.on('connection', socket => {
     console.log('socket established')
@@ -145,6 +167,9 @@ io.on('connection', socket => {
         socket.on('user-video-toggle', (value) => {
             socket.to(roomID).emit('check-user-video-toggle', {userData, value });
         });
+        socket.on('display-media', (value) =>{
+            socket.to(roomID).emit('invert-screen-content', {userData, value });
+        })
     });
     // joining the text channel
     socket.on('channel-join', (id) => {

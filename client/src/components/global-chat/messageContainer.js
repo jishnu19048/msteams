@@ -4,7 +4,7 @@ import IconButton from '@material-ui/core/IconButton';
 import SendIcon from '@material-ui/icons/Send';
 import VideocamIcon from '@material-ui/icons/Videocam';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
-import PeopleIcon from '@material-ui/icons/People';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import copy from "copy-to-clipboard"; 
 import messageTemp from './message-cover.png';
 import './style.scss';
@@ -40,8 +40,8 @@ export class MessagesPanel extends React.Component {
         this.props.promptCopied();
         console.log("hi");
     }
-    showUsers = (event) => {
-        this.props.showUsers(event);
+    showUsers = () => {
+        this.props.showUsers({link: this.props.channel._id});
     }
     render() {
 
@@ -68,7 +68,7 @@ export class MessagesPanel extends React.Component {
                         </IconButton>
                         <h3 className="channel-name">{this.props.channel.name}</h3>
                         <IconButton  aria-controls="user-list" className="right" onClick={this.showUsers} aria-label="delete">
-                            <PeopleIcon />
+                            <ExitToAppIcon />
                         </IconButton>
                     </div>
                 }

@@ -49,29 +49,42 @@ class Connection {
     }
     initializeSocketEvents = () => {
         this.socket.on('connect', () => {
-            console.log('socket connected');
+            // console.log('socket connected');
         });
         this.socket.on('new-chat', message => {
-            console.log(message);
+            // console.log(message);
             const newItem = {id: Date.now(),modifier:"him",text:message.message, user:message.email}
             this.message=newItem;
             this.settings.updateInstance('messageItemsNew', this.message);
         });
         this.socket.on('check-user-video-toggle', value => {
-            console.log(value.userDatauserID +"video status"+ value.value);
+            // console.log(value.userDatauserID +"video status"+ value.value);
             if(value.value){
                 this.switchVideoOff(value.userData);
             }else{
                 this.switchVideoOn(value.userData);
             }
         });
+        this.socket.on('invert-screen-content', data => {
+            // console.log(data);
+            if(data.value){
+                const { roomID, userID } =data.userData;
+                const Video =  document.getElementById(userID);
+                Video.classList.remove('display-media');
+            }else{
+                const { roomID, userID } =data.userData;
+                const Video =  document.getElementById(userID);
+                Video.classList.add('display-media');
+            }
+            
+        });
         this.socket.on('disconnected', (userID) => {
-            console.log('user disconnected-- closing peers', userID);
+            // console.log('user disconnected-- closing peers', userID);
             peers[userID] && peers[userID].close();
             this.removeVideo(userID);
         });
         this.socket.on('disconnect', () => {
-            console.log('socket disconnected --');
+            // console.log('socket disconnected --');
         });
         this.socket.on('error', (err) => {
             console.log('socket error --', err);
@@ -143,13 +156,13 @@ class Connection {
     }
     switchVideoOff(userData){
         const { roomID, userID } =userData;
-        const myVideo =  document.getElementById(userID);
-        myVideo.srcObject.getVideoTracks()[0].enabled=false;
+        const Video =  document.getElementById(userID);
+        Video.srcObject.getVideoTracks()[0].enabled=false;
     }
     switchVideoOn(userData){
         const { roomID, userID } =userData;
-        const myVideo =  document.getElementById(userID);
-        myVideo.srcObject.getVideoTracks()[0].enabled=true;
+        const Video =  document.getElementById(userID);
+        Video.srcObject.getVideoTracks()[0].enabled=true;
     }
     toggleAudio = () => {
         const myVideo =  this.getMyVideo();
@@ -190,7 +203,6 @@ class Connection {
             videoTrack[0].onended = () => {
                 this.socket.emit('display-media', false);
                 this.reInitializeStream(!status.video, status.audio, 'userMedia').then(() => {
-                    console.log("off");
                     this.settings.updateInstance('displayStream', false);
                     this.settings.updateInstance('camStatus', true);
                 });

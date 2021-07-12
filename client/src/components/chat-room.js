@@ -1,17 +1,24 @@
 import React from 'react';
+import Axios from 'axios';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
 import { ChannelList } from './global-chat/channel-list';
 import './global-chat/style.scss';
 import { MessagesPanel } from './global-chat/messageContainer';
 import {useNavigate } from "react-router-dom"
 import socketClient from "socket.io-client";
 const SERVER = "https://ms-teams-backend.herokuapp.com";
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions  } from '@material-ui/core';
 export class Chat extends React.Component {
 
     state = {
         channels: null,
         socket: null,
         channel: null,
-        username: null
+        username: null,
+        open: false
     }
     socket;
     componentDidMount() {
@@ -19,7 +26,10 @@ export class Chat extends React.Component {
         this.configureSocket();
         this.username=this.props.username;
     }
-
+    handleMeeting = () => {
+        this.state.open=(!this.state.open);
+        console.log(this.state.open);
+    }
     configureSocket = () => {
         var socket = socketClient(SERVER);
         socket.on('connection', () => {
@@ -96,11 +106,26 @@ export class Chat extends React.Component {
     showToast = (c) => {
         this.props.showToast(c);
     }
+    showUsers = (channelData) => {
+        Axios.post('https://ms-teams-backend.herokuapp.com/leaveChannel', {
+            username: this.username,
+            link: channelData.link
+        })
+        .then(function (response) {
+            window.location.reload();
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
 
+    }
     render() {
-
         return (
             <div className='chat-app'>
+                {/*  */}
+                {/* <Fab color="primary" onClick={this.handleMeeting} aria-label="add" style={{width:'50px',height:'43px'}}>
+                    <AddIcon />
+                </Fab> */}
                 <ChannelList channels={this.state.channels} onSelectChannel={this.handleChannelSelect} />
                 <MessagesPanel showUsers={this.showUsers} myUserName={this.username} promptCopied={this.toggleCopied} onRedirect={this.handleRedirectToMeeting} onSendMessage={this.handleSendMessage} channel={this.state.channel} />
             </div>

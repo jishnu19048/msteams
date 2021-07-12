@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import Axios from 'axios';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { HiStatusOnline } from 'react-icons/hi';
+import { HiRefresh, HiStatusOnline } from 'react-icons/hi';
 import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
 import Menu from '@material-ui/core/Menu';
@@ -221,9 +221,7 @@ function ResponsiveDrawer(props) {
 
     setPrompt(false);
   };
-  const showUsers = (val) => {
-    setChannelUsers(val.ev.currentTarget);
-    channels=val.channels;
+  const leaveChannel = (data) => {
   };
   const hideUsers = () => {
     setChannelUsers(null);
@@ -248,9 +246,6 @@ function ResponsiveDrawer(props) {
           </Fab>
       </ListItemIcon>
       <ListItemIcon className={classes.rows}>
-          <Fab className={classes.options}  aria-label="edit">
-            <ChatIcon />
-          </Fab>
           <ToastContainer 
             toastStyle={{ backgroundColor: "#5c6bc0" }}
             position="bottom-right"
@@ -393,7 +388,7 @@ function ResponsiveDrawer(props) {
         </nav>
         <main className={classes.content}>
           <div className={classes.toolbar} /> 
-          <Chat username={email} showToast={notify} onCopied={showCopiedPrompt} joinMeeting={handleJoinMeeting}/> 
+          <Chat username={email} showToast={notify} onCopied={showCopiedPrompt} leaveChannel={leaveChannel} joinMeeting={handleJoinMeeting}/> 
           <Menu
               className={classes.toolbarButtons}
               id="user-list"
