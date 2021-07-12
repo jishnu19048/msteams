@@ -3,6 +3,8 @@
 This is a text, audio & video chatting web-applicaiton running on node js.  
 Live web-app: https://ms-teams-engage.netlify.app/
 
+![](https://drive.google.com/uc?export=view&id=1fRCqmO0uHZMx8OvyAQ6qgjTuknnzsodT)
+![](https://drive.google.com/uc?export=view&id=1Xj2VjnmpLYlnksoIsELmk70q0ar6WA9r)
 
 ## Tech Stack
 
@@ -19,6 +21,8 @@ Live web-app: https://ms-teams-engage.netlify.app/
 - Notifications so that you dont miss anything.
 - Easy invitations using auto generated links.
 
+## Agile
+The development was led forward with an agile mindset, following an iterative development & indulging in sprints for groups of features instead of one single feature due to time being limited. This allowed the development to be more organized thorughout and was able to easily infuse in, the feature that the 'adopt' stage asked for.
 
 ## Overview
 
@@ -50,3 +54,7 @@ Make sure that you have git installed in your machine.
 ## Deployment
 The nodeJS backend is deployed on Heroku at https://ms-teams-backend.herokuapp.com/ & the react app is deployed on netlify at https://ms-teams-engage.netlify.app/.
 
+## Credits
+- Material UI
+- React-toast-notifications
+- Symentic UI React
