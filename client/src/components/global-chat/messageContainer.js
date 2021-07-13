@@ -63,9 +63,9 @@ export class MessagesPanel extends React.Component {
                         <IconButton onClick={this.redirect} aria-label="delete">
                             <VideocamIcon />
                         </IconButton>
-                        <IconButton  onClick={this.copyToClipBoard} aria-label="delete">
+                        {/* <IconButton  onClick={this.copyToClipBoard} aria-label="delete">
                             <PersonAddIcon />
-                        </IconButton>
+                        </IconButton> */}
                         <h3 className="channel-name">{this.props.channel.name}</h3>
                         <IconButton  aria-controls="user-list" className="right" onClick={this.showUsers} aria-label="delete">
                             <ExitToAppIcon />
