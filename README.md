@@ -51,7 +51,7 @@ Make sure that you have git installed in your machine.
 
 
 ## Deployment
-The nodeJS backend is deployed on Heroku at https://ms-teams-backend.herokuapp.com/ & the react app is deployed on netlify at https://ms-teams-engage.netlify.app/.
+The nodeJS backend is deployed on Heroku at https://ms-teams-backend.herokuapp.com/ & the react app is deployed on netlify at https://drgoli-teams.netlify.app/.
 
 ## Credits
 - Material UI
